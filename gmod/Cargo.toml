@@ -1,0 +1,14 @@
+[package]
+name = "gmod"
+version = "0.1.0"
+authors = ["William Venner <william@venner.io>"]
+edition = "2018"
+
+[dependencies]
+libloading = "0"
+detour = "0"
+skidscan = "0"
+cstr = "0"
+lazy_static = "1"
+ctor = "0"
+gmod-macros = { version = "0.1.0", path = "../gmod-macros" }

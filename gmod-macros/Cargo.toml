@@ -1,0 +1,16 @@
+[package]
+name = "gmod-macros"
+version = "0.1.0"
+authors = ["William Venner <william@venner.io>"]
+edition = "2018"
+license = "MIT"
+description = "Proc macros for gmod-rs"
+repository = "https://github.com/WilliamVenner/gmod-rs"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+syn = { version = "1", features = ["full"] }
+quote = "1"
