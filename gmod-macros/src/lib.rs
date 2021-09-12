@@ -28,7 +28,7 @@ pub fn gmod13_open(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
 pub fn gmod13_close(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
 	let mut input = parse_macro_input!(tokens as ItemFn);
 	check_lua_function(&mut input);
-	TokenStream::from(quote!(#input))
+	TokenStream::from(quote!(#[no_mangle] #input))
 }
 
 #[proc_macro_attribute]
