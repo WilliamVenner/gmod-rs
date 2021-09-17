@@ -3,6 +3,11 @@ name = "gmod"
 version = "0.1.0"
 authors = ["William Venner <william@venner.io>"]
 edition = "2018"
+license = "MIT"
+description = "A swiss army knife for creating binary modules for Garry's Mod in Rust"
+repository = "https://github.com/WilliamVenner/gmod-rs"
+keywords = ["gmod", "garrysmod", "module", "glua"]
+categories = ["api-bindings", "external-ffi-bindings", "game-development", "development-tools"]
 
 [dependencies]
 libloading = "0"
