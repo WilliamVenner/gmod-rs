@@ -272,7 +272,7 @@ impl LuaState {
 	}
 
 	#[inline]
-	pub unsafe fn check_userdata(&self, arg: i32, name: LuaString) -> *const c_void {
+	pub unsafe fn check_userdata(&self, arg: i32, name: LuaString) -> *mut c_void {
 		(LUA_SHARED.lual_checkudata)(*self, arg, name)
 	}
 
