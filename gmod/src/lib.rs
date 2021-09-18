@@ -18,9 +18,15 @@ pub mod hax;
 
 /// Returns whether this client is running the x86-64 branch
 ///
-/// Current implementation checks the LuaJIT version exported by lua_shared
+/// Current implementation checks the contents of the bin/ directory, so this is a blocking operation and requires syscalls, use sparingly
 pub fn is_x86_64() -> bool {
-	lua::LUA_SHARED.x86_64
+	use std::path::PathBuf;
+	#[cfg(target_os = "linux")] {
+		PathBuf::from("bin/linux64").is_dir()
+	}
+	#[cfg(target_os = "windows")] {
+		PathBuf::from("bin/win64").is_dir()
+	}
 }
 
 /// Opens & returns a shared library loaded by Garry's Mod using the raw path to the module.

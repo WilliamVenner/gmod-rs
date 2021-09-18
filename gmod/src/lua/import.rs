@@ -73,8 +73,6 @@ lazy_static::lazy_static! {
 }
 
 pub(crate) struct LuaShared {
-	pub x86_64: bool,
-
 	pub lual_loadfile: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, path: LuaString) -> i32>,
 	pub lual_loadstring: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, path: LuaString) -> i32>,
 	pub lua_getfield: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32, k: LuaString)>,
@@ -134,8 +132,6 @@ impl LuaShared {
 			}
 
 			Self {
-				x86_64: library.get::<unsafe extern "C-unwind" fn()>(b"luaJIT_version_2_1_0_beta3\0").is_ok(),
-
 				lual_loadfile: find_symbol!("luaL_loadfile"),
 				lual_loadstring: find_symbol!("luaL_loadstring"),
 				lua_getfield: find_symbol!("lua_getfield"),
