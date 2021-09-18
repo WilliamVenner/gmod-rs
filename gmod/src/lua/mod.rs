@@ -10,8 +10,8 @@ pub use lua_state::LuaState as State;
 #[derive(Debug)]
 pub struct UserData
 {
-	data: *mut core::ffi::c_void,
-	r#type: u8
+	pub data: *mut core::ffi::c_void,
+	pub r#type: u8
 }
 
 #[derive(Debug, Clone)]
