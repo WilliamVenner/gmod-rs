@@ -7,7 +7,6 @@ use crate::lua::*;
 pub struct LuaState(pub *mut std::ffi::c_void);
 unsafe impl Send for LuaState {}
 impl LuaState {
-
 	/// Returns the Lua string as a slice of bytes.
 	///
 	/// **WARNING:** This will CHANGE the type of the value at the given index to a string.
@@ -272,8 +271,8 @@ impl LuaState {
 	}
 
 	#[inline]
-	pub unsafe fn check_userdata(&self, arg: i32, name: LuaString) -> *mut c_void {
-		(LUA_SHARED.lual_checkudata)(*self, arg, name)
+	pub unsafe fn check_userdata(&self, arg: i32, name: LuaString) -> *mut UserData {
+		(LUA_SHARED.lual_checkudata)(*self, arg, name) as *mut _
 	}
 
 	pub unsafe fn test_userdata(&self, index: i32, name: LuaString) -> bool {
