@@ -40,7 +40,7 @@ pub fn is_x86_64() -> bool {
 #[macro_export]
 macro_rules! open_library_raw {
 	($($path:literal),+) => {
-		::gmod::libloading::Library::new(concat!($($path),+)).map(|lib| (lib, concat!($($path),+)))
+		$crate::libloading::Library::new(concat!($($path),+)).map(|lib| (lib, concat!($($path),+)))
 	}
 }
 
@@ -61,24 +61,24 @@ macro_rules! open_library_srv {
 		}
 
 		#[cfg(all(target_os = "windows", target_pointer_width = "64"))] {
-			::gmod::open_library_raw!("bin/win64/", $name, ".dll")
+			$crate::open_library_raw!("bin/win64/", $name, ".dll")
 		}
 		#[cfg(all(target_os = "windows", target_pointer_width = "32"))] {
-			::gmod::open_library_raw!("bin/", $name, ".dll")
-			.or_else(|_| ::gmod::open_library_raw!("garrysmod/bin/", $name, ".dll"))
+			$crate::open_library_raw!("bin/", $name, ".dll")
+			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, ".dll"))
 		}
 
 		#[cfg(all(target_os = "linux", target_pointer_width = "64"))] {
-			::gmod::open_library_raw!("bin/linux64/", $name, ".so")
-			.or_else(|_| ::gmod::open_library_raw!("bin/linux64/lib", $name, ".so"))
+			$crate::open_library_raw!("bin/linux64/", $name, ".so")
+			.or_else(|_| $crate::open_library_raw!("bin/linux64/lib", $name, ".so"))
 		}
 		#[cfg(all(target_os = "linux", target_pointer_width = "32"))] {
-			::gmod::open_library_raw!("bin/linux32/", $name, ".so")
-			.or_else(|_| ::gmod::open_library_raw!("bin/linux32/lib", $name, ".so"))
-			.or_else(|_| ::gmod::open_library_raw!("bin/", $name, "_srv.so"))
-			.or_else(|_| ::gmod::open_library_raw!("bin/lib", $name, "_srv.so"))
-			.or_else(|_| ::gmod::open_library_raw!("bin/", $name, ".so"))
-			.or_else(|_| ::gmod::open_library_raw!("bin/lib", $name, ".so"))
+			$crate::open_library_raw!("bin/linux32/", $name, ".so")
+			.or_else(|_| $crate::open_library_raw!("bin/linux32/lib", $name, ".so"))
+			.or_else(|_| $crate::open_library_raw!("bin/", $name, "_srv.so"))
+			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, "_srv.so"))
+			.or_else(|_| $crate::open_library_raw!("bin/", $name, ".so"))
+			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, ".so"))
 		}
 	}};
 }
@@ -100,24 +100,24 @@ macro_rules! open_library {
 		}
 
 		#[cfg(all(target_os = "windows", target_pointer_width = "64"))] {
-			::gmod::open_library_raw!("bin/win64/", $name, ".dll")
+			$crate::open_library_raw!("bin/win64/", $name, ".dll")
 		}
 		#[cfg(all(target_os = "windows", target_pointer_width = "32"))] {
-			::gmod::open_library_raw!("bin/", $name, ".dll")
-			.or_else(|_| ::gmod::open_library_raw!("garrysmod/bin/", $name, ".dll"))
+			$crate::open_library_raw!("bin/", $name, ".dll")
+			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, ".dll"))
 		}
 
 		#[cfg(all(target_os = "linux", target_pointer_width = "64"))] {
-			::gmod::open_library_raw!("bin/linux64/", $name, ".so")
-			.or_else(|_| ::gmod::open_library_raw!("bin/linux64/lib", $name, ".so"))
+			$crate::open_library_raw!("bin/linux64/", $name, ".so")
+			.or_else(|_| $crate::open_library_raw!("bin/linux64/lib", $name, ".so"))
 		}
 		#[cfg(all(target_os = "linux", target_pointer_width = "32"))] {
-			::gmod::open_library_raw!("bin/linux32/", $name, ".so")
-			.or_else(|_| ::gmod::open_library_raw!("bin/linux32/lib", $name, ".so"))
-			.or_else(|_| ::gmod::open_library_raw!("bin/", $name, ".so"))
-			.or_else(|_| ::gmod::open_library_raw!("bin/lib", $name, ".so"))
-			.or_else(|_| ::gmod::open_library_raw!("bin/", $name, "_srv.so"))
-			.or_else(|_| ::gmod::open_library_raw!("bin/lib", $name, "_srv.so"))
+			$crate::open_library_raw!("bin/linux32/", $name, ".so")
+			.or_else(|_| $crate::open_library_raw!("bin/linux32/lib", $name, ".so"))
+			.or_else(|_| $crate::open_library_raw!("bin/", $name, ".so"))
+			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, ".so"))
+			.or_else(|_| $crate::open_library_raw!("bin/", $name, "_srv.so"))
+			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, "_srv.so"))
 		}
 	}};
 }
