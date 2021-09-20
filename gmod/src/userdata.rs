@@ -56,17 +56,17 @@ pub enum UserData {
 #[derive(Clone, Copy, Debug, Default, PartialEq, PartialOrd)]
 #[repr(C)]
 pub struct Vector {
-	x: f32,
-	y: f32,
-	z: f32
+	pub x: f32,
+	pub y: f32,
+	pub z: f32
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, PartialOrd)]
 #[repr(C)]
 pub struct Angle {
-	p: f32,
-	y: f32,
-	r: f32
+	pub p: f32,
+	pub y: f32,
+	pub r: f32
 }
 
 #[repr(C)]
