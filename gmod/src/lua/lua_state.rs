@@ -2,7 +2,7 @@ use std::{mem::MaybeUninit, borrow::Cow, ffi::c_void};
 
 use crate::lua::*;
 
-use crate::userdata::UserData;
+use crate::userdata::TaggedUserData;
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug)]
@@ -282,7 +282,7 @@ impl LuaState {
 	}
 
 	#[inline]
-	pub unsafe fn check_userdata(&self, arg: i32, name: LuaString) -> *mut UserData {
+	pub unsafe fn check_userdata(&self, arg: i32, name: LuaString) -> *mut TaggedUserData {
 		(LUA_SHARED.lual_checkudata)(*self, arg, name) as *mut _
 	}
 
