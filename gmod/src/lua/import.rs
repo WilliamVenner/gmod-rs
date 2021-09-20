@@ -75,6 +75,7 @@ lazy_static::lazy_static! {
 pub(crate) struct LuaShared {
 	pub lual_loadfile: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, path: LuaString) -> i32>,
 	pub lual_loadstring: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, path: LuaString) -> i32>,
+	pub lual_loadbuffer: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, buff: LuaString, sz: LuaSize, name: LuaString) -> i32>,
 	pub lua_getfield: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32, k: LuaString)>,
 	pub lua_pushvalue: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32)>,
 	pub lua_pushboolean: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, bool: i32)>,
@@ -134,6 +135,7 @@ impl LuaShared {
 			Self {
 				lual_loadfile: find_symbol!("luaL_loadfile"),
 				lual_loadstring: find_symbol!("luaL_loadstring"),
+				lual_loadbuffer: find_symbol!("luaL_loadbuffer"),
 				lua_getfield: find_symbol!("lua_getfield"),
 				lua_pushvalue: find_symbol!("lua_pushvalue"),
 				lua_pushboolean: find_symbol!("lua_pushboolean"),
