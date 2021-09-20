@@ -6,14 +6,6 @@ pub use import::*;
 mod lua_state;
 pub use lua_state::LuaState as State;
 
-#[repr(C)]
-#[derive(Debug)]
-pub struct UserData
-{
-	pub data: *mut core::ffi::c_void,
-	pub r#type: u8
-}
-
 #[derive(Debug, Clone)]
 pub enum LuaError {
 	/// Out of memory

@@ -2,6 +2,8 @@ use std::{mem::MaybeUninit, borrow::Cow, ffi::c_void};
 
 use crate::lua::*;
 
+use crate::userdata::UserData;
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug)]
 pub struct LuaState(pub *mut std::ffi::c_void);

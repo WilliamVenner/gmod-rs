@@ -16,6 +16,9 @@ pub mod msgc;
 /// Advanced dark magic utilities
 pub mod hax;
 
+/// Userdata types
+pub mod userdata;
+
 /// Returns whether this client is running the x86-64 branch
 ///
 /// Current implementation checks the contents of the bin/ directory, so this is a blocking operation and requires syscalls, use sparingly
