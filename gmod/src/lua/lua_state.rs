@@ -147,6 +147,15 @@ impl LuaState {
 		}
 	}
 
+	pub unsafe fn load_buffer(&self, buff: &[u8], name: LuaString) -> Result<(), LuaError> {
+		let lua_error_code = (LUA_SHARED.lual_loadbuffer)(*self, buff.as_ptr() as LuaString, buff.len(), name);
+		if lua_error_code == 0 {
+			Ok(())
+		} else {
+			Err(LuaError::from_lua_state(*self, lua_error_code))
+		}
+	}
+
 	pub unsafe fn load_file(&self, path: LuaString) -> Result<(), LuaError> {
 		let lua_error_code = (LUA_SHARED.lual_loadfile)(*self, path);
 		if lua_error_code == 0 {
