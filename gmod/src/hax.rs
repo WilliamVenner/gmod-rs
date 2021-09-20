@@ -24,6 +24,60 @@ macro_rules! __vtable_offset {
 
 #[macro_export]
 /// Common pattern for detouring.
+/// # Example
+/// ```norun
+/// __callingconv_func! {
+///     #[win32 = "stdcall"]
+///     #[win64 = "stdcall"]
+///     #[linux32 = "C"]
+///     #[linux64 = "C"]
+/// 	CVoiceGameMgrHelper_CanPlayerHearPlayer = extern fn(listener: *mut c_void, talker: *mut c_void) -> bool {
+/// 	    println!("listener {:?} talker {:?}", listener, talker);
+/// 	    false
+///     }
+/// }
+/// ```
+macro_rules! __callingconv_func {
+	{ @callingconv $ty:ident = extern $callingconv:tt fn($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? $code:block } => {
+		type $ty = extern $callingconv fn($($ident: $arg),*) $(-> $rtn)?;
+		extern $callingconv fn $ty($($ident: $arg),*) $(-> $rtn)? $code
+	};
+
+	{ @callingconv $ty:ident = extern $callingconv:tt fn($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? } => {
+		type $ty = extern $callingconv fn($($ident: $arg),*) $(-> $rtn)?;
+	};
+
+	{ #[win32 = $win32:tt] #[win64 = $win64:tt] #[linux32 = $linux32:tt] #[linux64 = $linux64:tt] $ty:ident = extern fn($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? $code:block } => {
+		#[cfg(all(target_os = "windows", target_pointer_width = "32"))]
+		$crate::__callingconv_func! { @callingconv $ty = extern $win32 fn($($ident: $arg),*) $(-> $rtn)? $code }
+
+		#[cfg(all(target_os = "windows", target_pointer_width = "64"))]
+		$crate::__callingconv_func! { @callingconv $ty = extern $win64 fn($($ident: $arg),*) $(-> $rtn)? $code }
+
+		#[cfg(all(target_os = "linux", target_pointer_width = "32"))]
+		$crate::__callingconv_func! { @callingconv $ty = extern $linux32 fn($($ident: $arg),*) $(-> $rtn)? $code }
+
+		#[cfg(all(target_os = "linux", target_pointer_width = "64"))]
+		$crate::__callingconv_func! { @callingconv $ty = extern $linux64 fn($($ident: $arg),*) $(-> $rtn)? $code }
+	};
+
+	{ #[win32 = $win32:tt] #[win64 = $win64:tt] #[linux32 = $linux32:tt] #[linux64 = $linux64:tt] $ty:ident = extern fn($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? } => {
+		#[cfg(all(target_os = "windows", target_pointer_width = "32"))]
+		$crate::__callingconv_func! { @callingconv $ty = extern $win32 fn($($ident: $arg),*) $(-> $rtn)? }
+
+		#[cfg(all(target_os = "windows", target_pointer_width = "64"))]
+		$crate::__callingconv_func! { @callingconv $ty = extern $win64 fn($($ident: $arg),*) $(-> $rtn)? }
+
+		#[cfg(all(target_os = "linux", target_pointer_width = "32"))]
+		$crate::__callingconv_func! { @callingconv $ty = extern $linux32 fn($($ident: $arg),*) $(-> $rtn)? }
+
+		#[cfg(all(target_os = "linux", target_pointer_width = "64"))]
+		$crate::__callingconv_func! { @callingconv $ty = extern $linux64 fn($($ident: $arg),*) $(-> $rtn)? }
+	};
+}
+
+#[macro_export]
+/// Common pattern for detouring.
 macro_rules! __gmod_func {
 	($ty:ident = extern fn($($ident:ident: $arg:ty),*) $(-> $rtn:ty)?) => {
 		#[cfg(target_pointer_width = "64")]
