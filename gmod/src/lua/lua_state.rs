@@ -396,7 +396,6 @@ impl LuaState {
 		None
 	}
 
-	#[cfg(debug_assertions)]
 	pub unsafe fn dump_stack(&self) {
 		let top = self.get_top();
 		println!("\n=== STACK DUMP ===");
@@ -411,13 +410,24 @@ impl LuaState {
 					self.pop();
 					str
 				}),
+				"boolean" => println!("{}. {}: {:?}", i, lua_type_name, {
+					self.push_value(i);
+					let bool = self.get_boolean(-1);
+					self.pop();
+					bool
+				}),
+				"number" => println!("{}. {}: {:?}", i, lua_type_name, {
+					self.push_value(i);
+					let n = self.to_number(-1);
+					self.pop();
+					n
+				}),
 				_ => println!("{}. {}", i, lua_type_name),
 			}
 		}
 		println!();
 	}
 
-	#[cfg(debug_assertions)]
 	pub unsafe fn dump_val(&self, index: i32) -> String {
 		let lua_type_name = self.lua_type_name(self.lua_type(index));
 		match lua_type_name.as_ref() {
