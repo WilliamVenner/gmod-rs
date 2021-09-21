@@ -9,6 +9,16 @@ use crate::userdata::TaggedUserData;
 pub struct LuaState(pub *mut std::ffi::c_void);
 unsafe impl Send for LuaState {}
 impl LuaState {
+	pub unsafe fn new() -> Result<Self, LuaError> {
+		let lua = (LUA_SHARED.lual_newstate)();
+		(LUA_SHARED.lual_openlibs)(lua);
+		if lua.is_null() {
+			Err(LuaError::MemoryAllocationError)
+		} else {
+			Ok(lua)
+		}
+	}
+
 	/// Returns the Lua string as a slice of bytes.
 	///
 	/// **WARNING:** This will CHANGE the type of the value at the given index to a string.
