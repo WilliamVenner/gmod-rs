@@ -38,41 +38,41 @@ macro_rules! __vtable_offset {
 /// }
 /// ```
 macro_rules! __callingconv_func {
-	{ @callingconv $ty:ident = extern $callingconv:tt fn($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? $code:block } => {
-		type $ty = extern $callingconv fn($($ident: $arg),*) $(-> $rtn)?;
-		extern $callingconv fn $ty($($ident: $arg),*) $(-> $rtn)? $code
+	{ @callingconv $ty:ident = $vis:vis extern $callingconv:tt fn $fn_ident:ident($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? $code:block } => {
+		$vis type $ty = extern $callingconv fn($($ident: $arg),*) $(-> $rtn)?;
+		$vis extern $callingconv fn $fn_ident($($ident: $arg),*) $(-> $rtn)? $code
 	};
 
-	{ @callingconv $ty:ident = extern $callingconv:tt fn($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? } => {
-		type $ty = extern $callingconv fn($($ident: $arg),*) $(-> $rtn)?;
+	{ @callingconv $ty:ident = $vis:vis extern $callingconv:tt fn($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? } => {
+		$vis type $ty = extern $callingconv fn($($ident: $arg),*) $(-> $rtn)?;
 	};
 
-	{ #[win32 = $win32:tt] #[win64 = $win64:tt] #[linux32 = $linux32:tt] #[linux64 = $linux64:tt] $ty:ident = extern fn($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? $code:block } => {
+	{ #[win32 = $win32:tt] #[win64 = $win64:tt] #[linux32 = $linux32:tt] #[linux64 = $linux64:tt] $ty:ident = $vis:vis extern fn $($fn_ident:ident)?($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? $code:block } => {
 		#[cfg(all(target_os = "windows", target_pointer_width = "32"))]
-		$crate::__callingconv_func! { @callingconv $ty = extern $win32 fn($($ident: $arg),*) $(-> $rtn)? $code }
+		$crate::__callingconv_func! { @callingconv $ty = $vis extern $win32 fn $($fn_ident)?($($ident: $arg),*) $(-> $rtn)? $code }
 
 		#[cfg(all(target_os = "windows", target_pointer_width = "64"))]
-		$crate::__callingconv_func! { @callingconv $ty = extern $win64 fn($($ident: $arg),*) $(-> $rtn)? $code }
+		$crate::__callingconv_func! { @callingconv $ty = $vis extern $win64 fn $($fn_ident)?($($ident: $arg),*) $(-> $rtn)? $code }
 
 		#[cfg(all(target_os = "linux", target_pointer_width = "32"))]
-		$crate::__callingconv_func! { @callingconv $ty = extern $linux32 fn($($ident: $arg),*) $(-> $rtn)? $code }
+		$crate::__callingconv_func! { @callingconv $ty = $vis extern $linux32 fn $($fn_ident)?($($ident: $arg),*) $(-> $rtn)? $code }
 
 		#[cfg(all(target_os = "linux", target_pointer_width = "64"))]
-		$crate::__callingconv_func! { @callingconv $ty = extern $linux64 fn($($ident: $arg),*) $(-> $rtn)? $code }
+		$crate::__callingconv_func! { @callingconv $ty = $vis extern $linux64 fn $($fn_ident)?($($ident: $arg),*) $(-> $rtn)? $code }
 	};
 
-	{ #[win32 = $win32:tt] #[win64 = $win64:tt] #[linux32 = $linux32:tt] #[linux64 = $linux64:tt] $ty:ident = extern fn($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? } => {
+	{ #[win32 = $win32:tt] #[win64 = $win64:tt] #[linux32 = $linux32:tt] #[linux64 = $linux64:tt] $ty:ident = $vis:vis extern fn $($fn_ident:ident)?($($ident:ident: $arg:ty),*) $(-> $rtn:ty)? } => {
 		#[cfg(all(target_os = "windows", target_pointer_width = "32"))]
-		$crate::__callingconv_func! { @callingconv $ty = extern $win32 fn($($ident: $arg),*) $(-> $rtn)? }
+		$crate::__callingconv_func! { @callingconv $ty = $vis extern $win32 fn $($fn_ident)?($($ident: $arg),*) $(-> $rtn)? }
 
 		#[cfg(all(target_os = "windows", target_pointer_width = "64"))]
-		$crate::__callingconv_func! { @callingconv $ty = extern $win64 fn($($ident: $arg),*) $(-> $rtn)? }
+		$crate::__callingconv_func! { @callingconv $ty = $vis extern $win64 fn $($fn_ident)?($($ident: $arg),*) $(-> $rtn)? }
 
 		#[cfg(all(target_os = "linux", target_pointer_width = "32"))]
-		$crate::__callingconv_func! { @callingconv $ty = extern $linux32 fn($($ident: $arg),*) $(-> $rtn)? }
+		$crate::__callingconv_func! { @callingconv $ty = $vis extern $linux32 fn $($fn_ident)?($($ident: $arg),*) $(-> $rtn)? }
 
 		#[cfg(all(target_os = "linux", target_pointer_width = "64"))]
-		$crate::__callingconv_func! { @callingconv $ty = extern $linux64 fn($($ident: $arg),*) $(-> $rtn)? }
+		$crate::__callingconv_func! { @callingconv $ty = $vis extern $linux64 fn $($fn_ident)?($($ident: $arg),*) $(-> $rtn)? }
 	};
 }
 
