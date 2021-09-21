@@ -111,6 +111,11 @@ impl LuaState {
 	}
 
 	#[inline]
+	pub unsafe fn push_lightuserdata(&self, data: *mut c_void) {
+		(LUA_SHARED.lua_pushlightuserdata)(*self, data)
+	}
+
+	#[inline]
 	pub unsafe fn get_field(&self, index: i32, k: LuaString) {
 		(LUA_SHARED.lua_getfield)(*self, index, k)
 	}
@@ -318,6 +323,12 @@ impl LuaState {
 	#[inline]
 	pub unsafe fn check_number(&self, arg: i32) -> f64 {
 		(LUA_SHARED.lual_checknumber)(*self, arg)
+	}
+
+	#[inline]
+	pub unsafe fn check_boolean(&self, arg: i32) -> bool {
+		(LUA_SHARED.lual_checktype)(*self, arg, LUA_TBOOLEAN);
+		(LUA_SHARED.lua_toboolean)(*self, arg) == 1
 	}
 
 	#[inline]

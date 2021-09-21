@@ -1,3 +1,5 @@
+use std::ffi::c_void;
+
 use libloading::{Library, Symbol};
 
 macro_rules! find_library {
@@ -78,6 +80,7 @@ pub(crate) struct LuaShared {
 	pub lual_loadbuffer: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, buff: LuaString, sz: LuaSize, name: LuaString) -> i32>,
 	pub lua_getfield: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32, k: LuaString)>,
 	pub lua_pushvalue: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32)>,
+	pub lua_pushlightuserdata: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, data: *mut c_void)>,
 	pub lua_pushboolean: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, bool: i32)>,
 	pub lua_tolstring: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32, out_size: *mut LuaSize) -> LuaString>,
 	pub lua_pcall: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, nargs: i32, nresults: i32, errfunc: i32) -> i32>,
@@ -99,6 +102,7 @@ pub(crate) struct LuaShared {
 	pub lual_checkinteger: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, arg: i32) -> LuaInt>,
 	pub lual_checklstring: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, arg: i32, out_size: *mut LuaSize) -> LuaString>,
 	pub lua_toboolean: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32) -> i32>,
+	pub lual_checktype: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32, r#type: i32)>,
 	pub lua_setmetatable: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32) -> i32>,
 	pub lua_pushinteger: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, int: LuaInt)>,
 	pub lua_pushnumber: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, int: LuaNumber)>,
@@ -133,6 +137,8 @@ impl LuaShared {
 			}
 
 			Self {
+				lua_pushlightuserdata: find_symbol!("lua_pushlightuserdata"),
+				lual_checktype: find_symbol!("luaL_checktype"),
 				lual_loadfile: find_symbol!("luaL_loadfile"),
 				lual_loadstring: find_symbol!("luaL_loadstring"),
 				lual_loadbuffer: find_symbol!("luaL_loadbuffer"),
