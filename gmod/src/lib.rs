@@ -80,8 +80,12 @@ macro_rules! open_library_srv {
 			.or_else(|_| $crate::open_library_raw!("bin/linux32/lib", $name, ".so"))
 			.or_else(|_| $crate::open_library_raw!("bin/", $name, "_srv.so"))
 			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, "_srv.so"))
+			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, "_srv.so"))
+			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.so"))
 			.or_else(|_| $crate::open_library_raw!("bin/", $name, ".so"))
 			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, ".so"))
+			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, ".so"))
+			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/lib", $name, ".so"))
 		}
 	}};
 }
@@ -119,8 +123,12 @@ macro_rules! open_library {
 			.or_else(|_| $crate::open_library_raw!("bin/linux32/lib", $name, ".so"))
 			.or_else(|_| $crate::open_library_raw!("bin/", $name, ".so"))
 			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, ".so"))
+			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, ".so"))
+			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/lib", $name, ".so"))
 			.or_else(|_| $crate::open_library_raw!("bin/", $name, "_srv.so"))
 			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, "_srv.so"))
+			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, "_srv.so"))
+			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.so"))
 		}
 	}};
 }
