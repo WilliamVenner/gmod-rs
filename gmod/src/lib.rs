@@ -7,6 +7,12 @@ pub use cstr;
 pub use ctor::{ctor as dllopen, dtor as dllclose};
 pub use gmod_macros::*;
 
+// Reexport common macros
+pub use fn_type_alias::*;
+pub use fn_abi::*;
+pub use cfg_table::*;
+pub use null_fn::*;
+
 /// Lua interface
 pub mod lua;
 

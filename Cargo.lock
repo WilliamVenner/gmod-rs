@@ -21,6 +21,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "cfg_table"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "49f3690291e34881a89ceb8e80802f1582f29b1361fd476eeefb4e89dd6a121e"
+
+[[package]]
 name = "cstr"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -57,6 +63,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "fn_abi"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c8242bb800f5a67e61e17a2035b68596a1481fd5541187cd7f7392d8238482ac"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "fn_type_alias"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "809e807f01217f1f89959fbeebd10c6471b5ef3971fce1b02a70fb7212cc6c1f"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "generic-array"
 version = "0.14.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -68,14 +96,18 @@ dependencies = [
 
 [[package]]
 name = "gmod"
-version = "2.0.1"
+version = "3.0.0"
 dependencies = [
+ "cfg_table",
  "cstr",
  "ctor",
  "detour",
+ "fn_abi",
+ "fn_type_alias",
  "gmod-macros",
  "lazy_static",
  "libloading",
+ "null_fn",
  "skidscan",
 ]
 
@@ -148,6 +180,17 @@ dependencies = [
  "kernel32-sys",
  "libc",
  "winapi 0.2.8",
+]
+
+[[package]]
+name = "null_fn"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4934ec63b88f0415c46aedf2ab6c753d2d2e354e847c17e03515658207243b9c"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -225,9 +268,9 @@ checksum = "733fc6e5f1bd3a8136f842c9bdea4e5f17c910c2fcc98c90c3aa7604ef5e2e7a"
 
 [[package]]
 name = "syn"
-version = "1.0.76"
+version = "1.0.77"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c6f107db402c2c2055242dbf4d2af0e69197202e9faacbef9571bbe47f5a1b84"
+checksum = "5239bc68e0fef57495900cfea4e8dc75596d9a319d7e16b1e0a440d24e6fe0a0"
 dependencies = [
  "proc-macro2",
  "quote",
