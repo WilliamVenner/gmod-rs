@@ -1,6 +1,6 @@
 [package]
 name = "gmod"
-version = "3.0.0"
+version = "3.0.1"
 authors = ["William Venner <william@venner.io>"]
 edition = "2018"
 license = "MIT"
@@ -22,3 +22,4 @@ fn_type_alias = "0"
 fn_abi = "0"
 cfg_table = "0"
 null_fn = "0"
+fn_has_this = "0"

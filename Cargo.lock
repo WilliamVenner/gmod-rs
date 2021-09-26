@@ -28,9 +28,9 @@ checksum = "49f3690291e34881a89ceb8e80802f1582f29b1361fd476eeefb4e89dd6a121e"
 
 [[package]]
 name = "cstr"
-version = "0.2.8"
+version = "0.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c11a39d776a3b35896711da8a04dc1835169dcd36f710878187637314e47941b"
+checksum = "f2846d3636dcaff720d311ea8983f5fa7a8288632b2f95145dd4b5819c397fd8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -64,13 +64,26 @@ dependencies = [
 
 [[package]]
 name = "fn_abi"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8242bb800f5a67e61e17a2035b68596a1481fd5541187cd7f7392d8238482ac"
+checksum = "13ba31b3c3e35974ab9d1f652867eff7dddc1b0a85d5005f0a9bdb538232cbb3"
 dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+ "syn_squash",
+]
+
+[[package]]
+name = "fn_has_this"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb93938067213676967092012a53515e926de7c813afccd9b075ba0ec78dbba9"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+ "syn_squash",
 ]
 
 [[package]]
@@ -96,13 +109,14 @@ dependencies = [
 
 [[package]]
 name = "gmod"
-version = "3.0.0"
+version = "3.0.1"
 dependencies = [
  "cfg_table",
  "cstr",
  "ctor",
  "detour",
  "fn_abi",
+ "fn_has_this",
  "fn_type_alias",
  "gmod-macros",
  "lazy_static",
@@ -184,9 +198,9 @@ dependencies = [
 
 [[package]]
 name = "null_fn"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4934ec63b88f0415c46aedf2ab6c753d2d2e354e847c17e03515658207243b9c"
+checksum = "345919cfb52d0d8da7efc21aea56046ca96d9e3a8adfdbdb27ef1172829976c1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -276,6 +290,12 @@ dependencies = [
  "quote",
  "unicode-xid",
 ]
+
+[[package]]
+name = "syn_squash"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "134b985708d02b2569ab2b9e27c8758ca4baaaf725341a572d59bc2d174b9bb5"
 
 [[package]]
 name = "thiserror"

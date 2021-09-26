@@ -12,6 +12,7 @@ pub use fn_type_alias::*;
 pub use fn_abi::*;
 pub use cfg_table::*;
 pub use null_fn::*;
+pub use fn_has_this::*;
 
 /// Lua interface
 pub mod lua;
