@@ -64,9 +64,9 @@ dependencies = [
 
 [[package]]
 name = "fn_abi"
-version = "0.1.2"
+version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13ba31b3c3e35974ab9d1f652867eff7dddc1b0a85d5005f0a9bdb538232cbb3"
+checksum = "451b828bd3c5f19949222834f58b38c3670604dcaa5f2b7aec50c0cd58f34900"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -109,7 +109,7 @@ dependencies = [
 
 [[package]]
 name = "gmod"
-version = "3.0.1"
+version = "4.0.1"
 dependencies = [
  "cfg_table",
  "cstr",
