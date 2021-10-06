@@ -44,3 +44,37 @@ macro_rules! lua_string {
 		$crate::cstr::cstr!($str).as_ptr()
 	};
 }
+
+/// Enforces a debug assertion that the Lua stack is unchanged after this block of code is executed.
+///
+/// Useful for ensuring stack hygiene.
+///
+/// `lua` is the Lua state to check.
+///
+/// # Example
+///
+/// ```rust,norun
+/// lua_stack_guard!(lua => {
+/// 	lua.get_global(lua_string!("hook"));
+/// 	lua.get_field(-1, lua_string!("Add"));
+/// 	lua.push_string("PlayerInitialSpawn");
+/// 	lua.push_string("RustHook");
+/// 	lua.push_function(player_initial_spawn);
+/// 	lua.call(3, 0);
+/// 	// lua.pop();
+/// });
+/// // PANIC: stack is dirty! We forgot to pop the hook library off the stack.
+/// ```
+#[macro_export]
+macro_rules! lua_stack_guard {
+	( $lua:ident => $code:block ) => {{
+		#[cfg(debug_assertions)] {
+			let top = $lua.get_top();
+			$code
+			assert_eq!(top, $lua.get_top(), "Stack is dirty!");
+		}
+
+		#[cfg(not(debug_assertions))]
+		$code
+	}};
+}
