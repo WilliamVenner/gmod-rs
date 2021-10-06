@@ -26,6 +26,9 @@ pub mod hax;
 /// Userdata types
 pub mod userdata;
 
+/// Net library helpers
+pub mod net;
+
 /// Returns whether this client is running the x86-64 branch
 ///
 /// Current implementation checks the contents of the bin/ directory, so this is a blocking operation and requires syscalls, use sparingly
