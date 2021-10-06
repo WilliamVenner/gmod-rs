@@ -2,7 +2,7 @@
 /// Common pattern for detouring.
 macro_rules! find_gmod_signature {
 	(($library:ident, $library_path:ident), @EXPORT = $export:literal) => {
-		$library.get(concat!($export, '\0').as_bytes()).ok().map(|func: ::gmod::libloading::Symbol<'_, _>| *func)
+		$library.get(concat!($export, '\0').as_bytes()).ok().map(|func: $crate::libloading::Symbol<'_, _>| *func)
 	};
 
 	(($library:ident, $library_path:ident), @SIG = $sig:literal) => {

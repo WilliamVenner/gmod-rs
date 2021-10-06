@@ -41,6 +41,6 @@ pub enum LuaError {
 #[macro_export]
 macro_rules! lua_string {
 	( $str:literal ) => {
-		::gmod::cstr::cstr!($str).as_ptr()
+		$crate::cstr::cstr!($str).as_ptr()
 	};
 }

@@ -61,21 +61,21 @@ lazy_static::lazy_static! {
 }
 #[macro_export]
 macro_rules! colormsg {
-	($($($arg:expr)+),+) => {
-		$(::gmod::msgc::colormsg!(@print $($arg)+));+
+	($($arg:tt),+) => {
+		$($crate::colormsg!(@print $arg));+
 	};
 
 	(@print [$r:literal, $g:literal, $b:literal] $fmt:literal % ($($arg:tt),+)) => {
-		::gmod::msgc::ConColorMsg(
-			&::gmod::msgc::Color::new($r, $g, $b),
-			::gmod::msgc::printf_escape(format!(concat!($fmt, '\0'), $($arg),+)).as_ptr() as *const _,
+		$crate::msgc::ConColorMsg(
+			&$crate::msgc::Color::new($r, $g, $b),
+			$crate::msgc::printf_escape(format!(concat!($fmt, '\0'), $($arg),+)).as_ptr() as *const _,
 		)
 	};
 
 	(@print [$r:literal, $g:literal, $b:literal] $str:literal) => {
-		::gmod::msgc::ConColorMsg(
-			&::gmod::msgc::Color::new($r, $g, $b),
-			::gmod::msgc::printf_escape(concat!($str, '\0')).as_ptr() as *const _,
+		$crate::msgc::ConColorMsg(
+			&$crate::msgc::Color::new($r, $g, $b),
+			$crate::msgc::printf_escape(concat!($str, '\0')).as_ptr() as *const _,
 		)
 	};
 }
