@@ -8,7 +8,7 @@ macro_rules! find_library {
 	};
 }
 
-use super::{LuaError, State as LuaState, lua_state::LuaDebug};
+use super::{LuaError, State as LuaState, LuaDebug};
 
 pub type LuaInt = isize;
 pub type LuaSize = usize;

@@ -78,3 +78,38 @@ macro_rules! lua_stack_guard {
 		$code
 	}};
 }
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct LuaDebug {
+	pub event: i32,
+	pub name: LuaString,
+	pub namewhat: LuaString,
+	pub what: LuaString,
+	pub source: LuaString,
+	pub currentline: i32,
+	pub nups: i32,
+	pub linedefined: i32,
+	pub lastlinedefined: i32,
+	pub short_src: [std::os::raw::c_char; LUA_IDSIZE],
+	i_ci: i32
+}
+impl std::fmt::Debug for LuaDebug {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		unsafe {
+			f.debug_struct("LuaDebug")
+			.field("event", &self.event)
+			.field("name", &std::ffi::CStr::from_ptr(self.name))
+			.field("namewhat", &std::ffi::CStr::from_ptr(self.namewhat))
+			.field("what", &std::ffi::CStr::from_ptr(self.what))
+			.field("source", &std::ffi::CStr::from_ptr(self.source))
+			.field("currentline", &self.currentline)
+			.field("nups", &self.nups)
+			.field("linedefined", &self.linedefined)
+			.field("lastlinedefined", &self.lastlinedefined)
+			.field("short_src", &std::ffi::CStr::from_ptr(self.short_src.as_ptr()))
+			.field("i_ci", &self.i_ci)
+			.finish()
+		}
+	}
+}
