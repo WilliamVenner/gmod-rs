@@ -392,7 +392,16 @@ impl LuaState {
 		unreachable!()
 	}
 
-	pub unsafe fn debug_get_info(&self, what: LuaString) -> Option<LuaDebug> {
+	pub unsafe fn debug_getinfo_from_ar(&self, ar: &mut LuaDebug, what: LuaString) -> Result<(), ()> {
+		if (LUA_SHARED.lua_getinfo)(*self, what, ar as *mut LuaDebug) != 0 {
+			Ok(())
+		} else {
+			Err(())
+		}
+	}
+
+	/// `what` should start with `>` and pop a function off the stack
+	pub unsafe fn debug_getinfo_from_stack(&self, what: LuaString) -> Option<LuaDebug> {
 		let mut ar = MaybeUninit::uninit();
 		if (LUA_SHARED.lua_getinfo)(*self, what, ar.as_mut_ptr()) != 0 {
 			Some(ar.assume_init())
@@ -401,7 +410,16 @@ impl LuaState {
 		}
 	}
 
-	pub unsafe fn debug_get_invocation_info(&self, level: i32, what: LuaString) -> Option<LuaDebug> {
+	pub unsafe fn get_stack_at(&self, level: i32) -> Option<LuaDebug> {
+		let mut ar = MaybeUninit::uninit();
+		if (LUA_SHARED.lua_getstack)(*self, level, ar.as_mut_ptr()) != 0 {
+			Some(ar.assume_init())
+		} else {
+			None
+		}
+	}
+
+	pub unsafe fn debug_getinfo_at(&self, level: i32, what: LuaString) -> Option<LuaDebug> {
 		let mut ar = MaybeUninit::uninit();
 		if (LUA_SHARED.lua_getstack)(*self, level, ar.as_mut_ptr()) != 0 {
 			if (LUA_SHARED.lua_getinfo)(*self, what, ar.as_mut_ptr()) != 0 {

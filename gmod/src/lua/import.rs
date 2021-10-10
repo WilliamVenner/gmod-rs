@@ -71,10 +71,10 @@ impl LuaError {
 }
 
 lazy_static::lazy_static! {
-	pub(crate) static ref LUA_SHARED: LuaShared = LuaShared::import();
+	pub static ref LUA_SHARED: LuaShared = LuaShared::import();
 }
 
-pub(crate) struct LuaShared {
+pub struct LuaShared {
 	pub lual_newstate: Symbol<'static, unsafe extern "C-unwind" fn() -> LuaState>,
 	pub lual_openlibs: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState)>,
 	pub lual_loadfile: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, path: LuaString) -> i32>,
