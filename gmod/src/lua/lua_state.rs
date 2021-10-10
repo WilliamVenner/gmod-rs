@@ -381,6 +381,11 @@ impl LuaState {
 		(LUA_SHARED.lua_next)(*self, index)
 	}
 
+	#[inline]
+	pub unsafe fn to_pointer(&self, index: i32) -> *const c_void {
+		(LUA_SHARED.lua_topointer)(*self, index)
+	}
+
 	pub unsafe fn error<S: AsRef<str>>(&self, msg: S) -> ! {
 		self.push_string(msg.as_ref());
 		(LUA_SHARED.lua_error)(*self);
