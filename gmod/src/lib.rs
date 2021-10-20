@@ -1,3 +1,4 @@
+#![doc = include_str!("../../README.md")]
 #![feature(c_unwind)]
 
 pub use libloading;
