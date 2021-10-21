@@ -94,3 +94,9 @@ pub struct LuaDebug {
 	pub short_src: [std::os::raw::c_char; LUA_IDSIZE],
 	pub i_ci: i32
 }
+
+#[inline(always)]
+/// Loads lua_shared and imports all functions. This is already done for you if you add `#[gmod::gmod13_open]` to your `gmod13_open` function.
+pub unsafe fn load() {
+	import::LUA_SHARED.load()
+}

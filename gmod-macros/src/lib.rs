@@ -21,6 +21,7 @@ fn check_lua_function(input: &mut ItemFn) {
 pub fn gmod13_open(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
 	let mut input = parse_macro_input!(tokens as ItemFn);
 	check_lua_function(&mut input);
+	input.block.stmts.insert(0, syn::parse2(quote!(#[allow(unused_unsafe)] unsafe { ::gmod::lua::load() })).unwrap());
 	TokenStream::from(quote!(#[no_mangle] #input))
 }
 

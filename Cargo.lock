@@ -109,7 +109,7 @@ dependencies = [
 
 [[package]]
 name = "gmod"
-version = "5.0.0"
+version = "6.0.0"
 dependencies = [
  "cfg_table",
  "cstr",
@@ -127,7 +127,7 @@ dependencies = [
 
 [[package]]
 name = "gmod-macros"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "proc-macro2",
  "quote",

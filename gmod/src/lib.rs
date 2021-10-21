@@ -1,5 +1,6 @@
 #![doc = include_str!("../../README.md")]
 #![feature(c_unwind)]
+#![feature(thread_id_value)]
 
 pub use libloading;
 pub use detour;

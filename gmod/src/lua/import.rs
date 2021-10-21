@@ -1,4 +1,7 @@
-use std::ffi::c_void;
+#[cfg(debug_assertions)]
+use std::sync::atomic::AtomicI64;
+
+use std::{cell::UnsafeCell, ffi::c_void};
 
 use libloading::{Library, Symbol};
 
@@ -70,9 +73,49 @@ impl LuaError {
 	}
 }
 
-lazy_static::lazy_static! {
-	pub static ref LUA_SHARED: LuaShared = LuaShared::import();
+#[cfg_attr(not(debug_assertions), repr(transparent))]
+pub struct LuaSharedInterface(UnsafeCell<*mut LuaShared>, #[cfg(debug_assertions)] AtomicI64);
+impl LuaSharedInterface {
+	#[cfg(debug_assertions)]
+	fn debug_assertions(&self) {
+		assert!(!unsafe { *self.0.get() }.is_null(), "The Lua state has not been initialized yet. Add `#[gmod::gmod13_open]` to your module's gmod13_open function to fix this. You can also manually load the Lua state with `gmod::load_lua_state()` or `gmod::set_lua_state(*mut c_void)`");
+
+		let thread_id = u64::from(std::thread::current().id().as_u64()) as i64;
+		match self.1.compare_exchange(-1, thread_id, std::sync::atomic::Ordering::SeqCst, std::sync::atomic::Ordering::SeqCst) {
+			Ok(-1) => {}, // This is the first thread to use this Lua state.
+			Ok(_) => unreachable!(),
+			Err(remembered_thread_id) => assert_eq!(thread_id, remembered_thread_id, "Tried to access the Lua state from another thread! The Lua state is NOT thread-safe, and should only be accessed from the main thread.")
+		}
+	}
+
+	pub(super) unsafe fn load(&self) {
+		*self.0.get() = Box::leak(Box::new(LuaShared::import()));
+	}
+
+	pub(super) unsafe fn set(&self, ptr: *mut c_void) {
+		*self.0.get() = ptr as *mut LuaShared;
+	}
 }
+impl std::ops::Deref for LuaSharedInterface {
+	type Target = LuaShared;
+
+	fn deref(&self) -> &Self::Target {
+		#[cfg(debug_assertions)]
+		self.debug_assertions();
+
+		unsafe { &**self.0.get() }
+	}
+}
+impl std::ops::DerefMut for LuaSharedInterface {
+	fn deref_mut(&mut self) -> &mut Self::Target {
+		#[cfg(debug_assertions)]
+		self.debug_assertions();
+
+		unsafe { &mut **self.0.get_mut() }
+	}
+}
+
+pub static mut LUA_SHARED: LuaSharedInterface = LuaSharedInterface(UnsafeCell::new(std::ptr::null_mut()), #[cfg(debug_assertions)] AtomicI64::new(-1));
 
 pub struct LuaShared {
 	pub lual_newstate: Symbol<'static, unsafe extern "C-unwind" fn() -> LuaState>,

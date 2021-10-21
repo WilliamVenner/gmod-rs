@@ -1,6 +1,6 @@
 [package]
 name = "gmod"
-version = "5.0.0"
+version = "6.0.0"
 authors = ["William Venner <william@venner.io>"]
 edition = "2018"
 license = "MIT"
@@ -16,7 +16,7 @@ skidscan = "0"
 cstr = "0"
 lazy_static = "1"
 ctor = "0"
-gmod-macros = { version = "0.1.0", path = "../gmod-macros" }
+gmod-macros = { version = "1.0.0", path = "../gmod-macros" }
 
 fn_type_alias = "0"
 fn_abi = "2"
