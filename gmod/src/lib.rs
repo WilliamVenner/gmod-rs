@@ -1,4 +1,3 @@
-#![doc = include_str!("../../README.md")]
 #![feature(c_unwind)]
 #![feature(thread_id_value)]
 
