@@ -65,12 +65,12 @@ impl LuaState {
 		unsafe { std::str::from_utf8_unchecked(lua_type_str.to_bytes()) }
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn get_top(&self) -> i32 {
 		(LUA_SHARED.lua_gettop)(*self)
 	}
 
-	#[inline]
+	#[inline(always)]
 	/// Pops the stack, inserts the value into the registry table, and returns the registry index of the value.
 	///
 	/// Use `from_reference` with the reference index to push the value back onto the stack.
@@ -80,77 +80,77 @@ impl LuaState {
 		(LUA_SHARED.lual_ref)(*self, LUA_REGISTRYINDEX)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn dereference(&self, r#ref: LuaReference) {
 		(LUA_SHARED.lual_unref)(*self, LUA_REGISTRYINDEX, r#ref)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn from_reference(&self, r#ref: LuaReference) {
 		self.raw_geti(LUA_REGISTRYINDEX, r#ref)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn is_nil(&self, index: i32) -> bool {
 		(LUA_SHARED.lua_type)(*self, index) == LUA_TNIL
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn is_function(&self, index: i32) -> bool {
 		(LUA_SHARED.lua_type)(*self, index) == LUA_TFUNCTION
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn is_table(&self, index: i32) -> bool {
 		(LUA_SHARED.lua_type)(*self, index) == LUA_TTABLE
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn is_boolean(&self, index: i32) -> bool {
 		(LUA_SHARED.lua_type)(*self, index) == LUA_TBOOLEAN
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn remove(&self, index: i32) {
 		(LUA_SHARED.lua_remove)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn push_value(&self, index: i32) {
 		(LUA_SHARED.lua_pushvalue)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn push_lightuserdata(&self, data: *mut c_void) {
 		(LUA_SHARED.lua_pushlightuserdata)(*self, data)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn get_field(&self, index: i32, k: LuaString) {
 		(LUA_SHARED.lua_getfield)(*self, index, k)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn push_boolean(&self, boolean: bool) {
 		(LUA_SHARED.lua_pushboolean)(*self, if boolean { 1 } else { 0 })
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn push_integer(&self, int: LuaInt) {
 		(LUA_SHARED.lua_pushinteger)(*self, int)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn push_number(&self, num: LuaNumber) {
 		(LUA_SHARED.lua_pushnumber)(*self, num)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn push_nil(&self) {
 		(LUA_SHARED.lua_pushnil)(*self)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn pcall(&self, nargs: i32, nresults: i32, errfunc: i32) -> i32 {
 		(LUA_SHARED.lua_pcall)(*self, nargs, nresults, errfunc)
 	}
@@ -182,22 +182,22 @@ impl LuaState {
 		}
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn pop(&self) {
 		self.pop_n(1);
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn pop_n(&self, count: i32) {
 		self.set_top(-count - 1);
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn set_top(&self, index: i32) {
 		(LUA_SHARED.lua_settop)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn lua_type(&self, index: i32) -> i32 {
 		(LUA_SHARED.lua_type)(*self, index)
 	}
@@ -208,57 +208,57 @@ impl LuaState {
 		type_str.to_string_lossy()
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn replace(&self, index: i32) {
 		(LUA_SHARED.lua_replace)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn push_globals(&self) {
 		(LUA_SHARED.lua_pushvalue)(*self, LUA_GLOBALSINDEX)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn push_string(&self, data: &str) {
 		(LUA_SHARED.lua_pushlstring)(*self, data.as_ptr() as LuaString, data.len())
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn push_binary_string(&self, data: &[u8]) {
 		(LUA_SHARED.lua_pushlstring)(*self, data.as_ptr() as LuaString, data.len())
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn push_function(&self, func: LuaFunction) {
 		(LUA_SHARED.lua_pushcclosure)(*self, func, 0)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn set_table(&self, index: i32) {
 		(LUA_SHARED.lua_settable)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn set_field(&self, index: i32, k: LuaString) {
 		(LUA_SHARED.lua_setfield)(*self, index, k)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn get_global(&self, name: LuaString) {
 		(LUA_SHARED.lua_getfield)(*self, LUA_GLOBALSINDEX, name)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn set_global(&self, name: LuaString) {
 		(LUA_SHARED.lua_setfield)(*self, LUA_GLOBALSINDEX, name)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn call(&self, nargs: i32, nresults: i32) {
 		(LUA_SHARED.lua_call)(*self, nargs, nresults)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn insert(&self, index: i32) {
 		(LUA_SHARED.lua_insert)(*self, index)
 	}
@@ -267,19 +267,19 @@ impl LuaState {
 	/// seq_n is a hint as to how many sequential elements the table may have.
 	/// hash_n is a hint as to how many non-sequential/hashed elements the table may have.
 	/// Lua may use these hints to preallocate memory.
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn create_table(&self, seq_n: i32, hash_n: i32) {
 		(LUA_SHARED.lua_createtable)(*self, seq_n, hash_n)
 	}
 
 	/// Creates a new table and pushes it to the stack without memory preallocation hints.
 	/// Equivalent to `create_table(0, 0)`
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn new_table(&self) {
 		(LUA_SHARED.lua_createtable)(*self, 0, 0)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn get_table(&self, index: i32) {
 		(LUA_SHARED.lua_gettable)(*self, index)
 	}
@@ -296,7 +296,7 @@ impl LuaState {
 		String::from_utf8_lossy(std::slice::from_raw_parts(ptr as *const u8, len))
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn check_userdata(&self, arg: i32, name: LuaString) -> *mut TaggedUserData {
 		(LUA_SHARED.lual_checkudata)(*self, arg, name) as *mut _
 	}
@@ -315,73 +315,73 @@ impl LuaState {
 		false
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn raw_equal(&self, a: i32, b: i32) -> bool {
 		(LUA_SHARED.lua_rawequal)(*self, a, b) == 1
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn get_metatable(&self, index: i32) -> i32 {
 		(LUA_SHARED.lua_getmetatable)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn check_integer(&self, arg: i32) -> LuaInt {
 		(LUA_SHARED.lual_checkinteger)(*self, arg)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn check_number(&self, arg: i32) -> f64 {
 		(LUA_SHARED.lual_checknumber)(*self, arg)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn check_boolean(&self, arg: i32) -> bool {
 		(LUA_SHARED.lual_checktype)(*self, arg, LUA_TBOOLEAN);
 		(LUA_SHARED.lua_toboolean)(*self, arg) == 1
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn to_integer(&self, index: i32) -> LuaInt {
 		(LUA_SHARED.lua_tointeger)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn to_number(&self, index: i32) -> f64 {
 		(LUA_SHARED.lua_tonumber)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn get_boolean(&self, index: i32) -> bool {
 		(LUA_SHARED.lua_toboolean)(*self, index) == 1
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn set_metatable(&self, index: i32) -> i32 {
 		(LUA_SHARED.lua_setmetatable)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn len(&self, index: i32) -> i32 {
 		(LUA_SHARED.lua_objlen)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn raw_geti(&self, t: i32, index: i32) {
 		(LUA_SHARED.lua_rawgeti)(*self, t, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn raw_seti(&self, t: i32, index: i32) {
 		(LUA_SHARED.lua_rawseti)(*self, t, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn next(&self, index: i32) -> i32 {
 		(LUA_SHARED.lua_next)(*self, index)
 	}
 
-	#[inline]
+	#[inline(always)]
 	pub unsafe fn to_pointer(&self, index: i32) -> *const c_void {
 		(LUA_SHARED.lua_topointer)(*self, index)
 	}

@@ -2,7 +2,7 @@
 
 use std::os::raw::c_char;
 
-#[inline]
+#[inline(always)]
 pub fn printf_escape<S: AsRef<str>>(str: S) -> String {
 	str.as_ref().replace('\\', "\\\\").replace('%', "%%")
 }
@@ -15,7 +15,7 @@ pub struct Color {
 	a: u8
 }
 impl Color {
-	#[inline]
+	#[inline(always)]
 	pub const fn new(r: u8, g: u8, b: u8) -> Color {
 		Color { r, g, b, a: 255 }
 	}
