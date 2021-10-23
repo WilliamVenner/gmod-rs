@@ -110,3 +110,9 @@ userdata! {
 	UserData::Vector => Vector,
 	UserData::Angle => Angle
 }
+
+pub(crate) unsafe extern "C-unwind" fn __gc<T: Sized>(lua: crate::lua::State) -> i32 {
+	let userdata = lua.to_userdata(1) as *mut T;
+	std::ptr::read(userdata);
+	0
+}

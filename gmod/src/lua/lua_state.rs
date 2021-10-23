@@ -386,6 +386,40 @@ impl LuaState {
 		(LUA_SHARED.lua_topointer)(*self, index)
 	}
 
+	#[inline(always)]
+	pub unsafe fn to_userdata(&self, index: i32) -> *mut c_void {
+		(LUA_SHARED.lua_touserdata)(*self, index)
+	}
+
+	pub unsafe fn new_userdata<T: Sized>(&self, data: T, metatable: Option<i32>) -> *mut T {
+		let has_metatable = if std::mem::needs_drop::<T>() {
+			if let Some(metatable) = metatable {
+				self.push_value(metatable);
+			} else {
+				self.new_table();
+			}
+			self.push_function(crate::userdata::__gc::<T>);
+			self.set_field(-2, crate::lua_string!("__gc"));
+			true
+		} else if let Some(metatable) = metatable {
+			self.push_value(metatable);
+			true
+		} else {
+			false
+		};
+
+		let ptr = (LUA_SHARED.lua_newuserdata)(*self, std::mem::size_of::<T>()) as *mut T;
+
+		if has_metatable {
+			self.push_value(-2);
+			self.set_metatable(-2);
+			self.remove(-2);
+		}
+
+		ptr.write(data);
+		ptr
+	}
+
 	pub unsafe fn error<S: AsRef<str>>(&self, msg: S) -> ! {
 		self.push_string(msg.as_ref());
 		(LUA_SHARED.lua_error)(*self);
