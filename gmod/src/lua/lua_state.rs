@@ -219,6 +219,11 @@ impl LuaState {
 	}
 
 	#[inline(always)]
+	pub unsafe fn push_registry(&self) {
+		(LUA_SHARED.lua_pushvalue)(*self, LUA_REGISTRYINDEX)
+	}
+
+	#[inline(always)]
 	pub unsafe fn push_string(&self, data: &str) {
 		(LUA_SHARED.lua_pushlstring)(*self, data.as_ptr() as LuaString, data.len())
 	}
@@ -326,6 +331,16 @@ impl LuaState {
 	}
 
 	#[inline(always)]
+	pub unsafe fn check_table(&self, arg: i32) {
+		(LUA_SHARED.lual_checktype)(*self, arg, LUA_TTABLE)
+	}
+
+	#[inline(always)]
+	pub unsafe fn check_function(&self, arg: i32) {
+		(LUA_SHARED.lual_checktype)(*self, arg, LUA_TFUNCTION)
+	}
+
+	#[inline(always)]
 	pub unsafe fn check_integer(&self, arg: i32) -> LuaInt {
 		(LUA_SHARED.lual_checkinteger)(*self, arg)
 	}
@@ -389,6 +404,13 @@ impl LuaState {
 	#[inline(always)]
 	pub unsafe fn to_userdata(&self, index: i32) -> *mut c_void {
 		(LUA_SHARED.lua_touserdata)(*self, index)
+	}
+
+	/// Creates a new table in the registry with the given `name` as the key if it doesn't already exist, and pushes it onto the stack.
+	///
+	/// Returns if the metatable was already present in the registry.
+	pub unsafe fn new_metatable(&self, name: LuaString) -> bool {
+		(LUA_SHARED.lual_newmetatable)(*self, name) == 0
 	}
 
 	pub unsafe fn new_userdata<T: Sized>(&self, data: T, metatable: Option<i32>) -> *mut T {

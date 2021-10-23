@@ -169,6 +169,7 @@ pub struct LuaShared {
 	pub lua_next: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32) -> i32>,
 	pub lua_topointer: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32) -> *const c_void>,
 	pub lua_newuserdata: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, size: usize) -> *mut c_void>,
+	pub lual_newmetatable: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, name: LuaString) -> i32>,
 }
 unsafe impl Sync for LuaShared {}
 impl LuaShared {
@@ -235,6 +236,7 @@ impl LuaShared {
 				lua_next: find_symbol!("lua_next"),
 				lua_topointer: find_symbol!("lua_topointer"),
 				lua_newuserdata: find_symbol!("lua_newuserdata"),
+				lual_newmetatable: find_symbol!("lual_newmetatable"),
 			}
 		}
 	}
