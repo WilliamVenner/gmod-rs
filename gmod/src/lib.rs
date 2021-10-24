@@ -1,6 +1,5 @@
 #![feature(c_unwind)]
 #![feature(thread_id_value)]
-#![feature(const_btree_new)]
 
 pub use libloading;
 pub use detour;
