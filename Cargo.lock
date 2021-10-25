@@ -255,9 +255,9 @@ checksum = "f12d06de37cf59146fbdecab66aa99f9fe4f78722e3607577a5375d66bd0c913"
 
 [[package]]
 name = "skidscan"
-version = "0.1.3"
+version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e599f7639f0115549da310b45dc29319858981e20dd5e15ee66f69fc8219092e"
+checksum = "bee038c26dc00687b748727c823c9a08f4393c6b5bda67911dec9d4ae35dc215"
 dependencies = [
  "libc",
  "skidscan-macros",
