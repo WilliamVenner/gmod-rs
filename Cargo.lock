@@ -109,7 +109,7 @@ dependencies = [
 
 [[package]]
 name = "gmod"
-version = "7.0.0"
+version = "7.0.1"
 dependencies = [
  "cfg_table",
  "cstr",
@@ -255,9 +255,9 @@ checksum = "f12d06de37cf59146fbdecab66aa99f9fe4f78722e3607577a5375d66bd0c913"
 
 [[package]]
 name = "skidscan"
-version = "1.0.0"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bee038c26dc00687b748727c823c9a08f4393c6b5bda67911dec9d4ae35dc215"
+checksum = "60c2b7c0d9358c69c16b05037d80ffc810655ea7a2625beeb8af8a8b37126768"
 dependencies = [
  "libc",
  "skidscan-macros",

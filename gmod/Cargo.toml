@@ -1,6 +1,6 @@
 [package]
 name = "gmod"
-version = "7.0.0"
+version = "7.0.1"
 authors = ["William Venner <william@venner.io>"]
 edition = "2018"
 license = "MIT"
@@ -12,7 +12,7 @@ categories = ["api-bindings", "external-ffi-bindings", "game-development", "deve
 [dependencies]
 libloading = "0"
 detour = "0"
-skidscan = "1"
+skidscan = "2"
 cstr = "0"
 lazy_static = "1"
 ctor = "0"
