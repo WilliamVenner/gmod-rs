@@ -236,7 +236,7 @@ impl LuaShared {
 				lua_next: find_symbol!("lua_next"),
 				lua_topointer: find_symbol!("lua_topointer"),
 				lua_newuserdata: find_symbol!("lua_newuserdata"),
-				lual_newmetatable: find_symbol!("lual_newmetatable"),
+				lual_newmetatable: find_symbol!("luaL_newmetatable"),
 			}
 		}
 	}
