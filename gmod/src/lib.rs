@@ -1,19 +1,24 @@
 #![feature(c_unwind)]
 #![feature(thread_id_value)]
 
-pub use libloading;
-pub use detour;
-pub use skidscan as sigscan;
 pub use cstr;
-pub use ctor::{ctor as dllopen, dtor as dllclose};
+pub use libloading;
 pub use gmod_macros::*;
 
-// Reexport common macros
-pub use fn_type_alias::*;
-pub use fn_abi::*;
-pub use cfg_table::*;
-pub use null_fn::*;
-pub use fn_has_this::*;
+#[cfg(feature = "hax")]
+mod haxports {
+	pub use detour;
+	pub use skidscan as sigscan;
+	pub use ctor::{ctor as dllopen, dtor as dllclose};
+
+	pub use fn_type_alias::*;
+	pub use fn_abi::*;
+	pub use cfg_table::*;
+	pub use null_fn::*;
+	pub use fn_has_this::*;
+}
+#[cfg(feature = "hax")]
+pub use haxports::*;
 
 /// Lua interface
 pub mod lua;
