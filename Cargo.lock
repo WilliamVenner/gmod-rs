@@ -110,6 +110,8 @@ dependencies = [
 [[package]]
 name = "gmod"
 version = "8.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "715c1eec3ce86b2871086e9577f6e6a68ea1e58a188422826d50d18f3d15d0e4"
 dependencies = [
  "cfg_table",
  "cstr",
@@ -118,7 +120,26 @@ dependencies = [
  "fn_abi",
  "fn_has_this",
  "fn_type_alias",
- "gmod-macros",
+ "gmod-macros 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static",
+ "libloading",
+ "null_fn",
+ "skidscan",
+]
+
+[[package]]
+name = "gmod"
+version = "9.0.0"
+dependencies = [
+ "cfg_table",
+ "cstr",
+ "ctor",
+ "detour",
+ "fn_abi",
+ "fn_has_this",
+ "fn_type_alias",
+ "gmod-macros 1.0.0",
+ "gmserverplugin",
  "lazy_static",
  "libloading",
  "null_fn",
@@ -132,6 +153,26 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "gmod-macros"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b791745998b09a16260e803bb0cca1a641e9b70e2aae94d7a485d34259b29279"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "gmserverplugin"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "481dc5ce867d0ac9c140b3c900e97ff532436045f3d29c8e5d51e8df3b64b336"
+dependencies = [
+ "gmod 8.0.0",
 ]
 
 [[package]]
