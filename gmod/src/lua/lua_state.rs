@@ -155,6 +155,25 @@ impl LuaState {
 		(LUA_SHARED.lua_pcall)(*self, nargs, nresults, errfunc)
 	}
 
+	/// Same as pcall, but ignores any runtime error and calls `ErrorNoHaltWithStack` instead with the error message.
+	///
+	/// Returns whether the execution was successful.
+	pub unsafe fn pcall_ignore(&self, nargs: i32, nresults: i32) -> bool {
+		let res = self.pcall(nargs, nresults, 0);
+		if res == LUA_ERRRUN {
+			self.get_global(crate::lua_string!("ErrorNoHaltWithStack"));
+			if self.is_nil(-1) {
+				eprintln!("[ERROR] {:?}", self.get_string(-2));
+				return false;
+			}
+			self.push_value(-2);
+			self.call(1, 0);
+			self.pop();
+			return false;
+		}
+		true
+	}
+
 	pub unsafe fn load_string(&self, src: LuaString) -> Result<(), LuaError> {
 		let lua_error_code = (LUA_SHARED.lual_loadstring)(*self, src);
 		if lua_error_code == 0 {
@@ -259,6 +278,9 @@ impl LuaState {
 	}
 
 	#[inline(always)]
+	/// WARNING: Any Lua errors caused by calling the function will longjmp and prevent any further execution of your code.
+	///
+	/// To workaround this, use `pcall_ignore`, which will call `ErrorNoHaltWithStack` instead and allow your code to continue executing.
 	pub unsafe fn call(&self, nargs: i32, nresults: i32) {
 		(LUA_SHARED.lua_call)(*self, nargs, nresults)
 	}
