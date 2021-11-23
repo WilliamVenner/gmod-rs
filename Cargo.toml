@@ -3,3 +3,6 @@ members = [
 	"gmod",
 	"gmod-macros"
 ]
+exclude = [
+	"example/my-first-binary-module"
+]
