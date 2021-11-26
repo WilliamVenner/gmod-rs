@@ -27,6 +27,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49f3690291e34881a89ceb8e80802f1582f29b1361fd476eeefb4e89dd6a121e"
 
 [[package]]
+name = "cfg_table"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "78518bef4e5cc70a69a0bd1905594f8033b2f7492c9d7c0f173208c0945c30a2"
+
+[[package]]
 name = "cstr"
 version = "0.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -113,7 +119,7 @@ version = "8.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "715c1eec3ce86b2871086e9577f6e6a68ea1e58a188422826d50d18f3d15d0e4"
 dependencies = [
- "cfg_table",
+ "cfg_table 0.1.1",
  "cstr",
  "ctor",
  "detour",
@@ -129,9 +135,9 @@ dependencies = [
 
 [[package]]
 name = "gmod"
-version = "9.1.0"
+version = "10.0.0"
 dependencies = [
- "cfg_table",
+ "cfg_table 1.0.0",
  "cstr",
  "ctor",
  "detour",
