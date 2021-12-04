@@ -249,27 +249,27 @@ impl LuaShared {
 	}
 
 	#[cfg(all(target_os = "windows", target_pointer_width = "64"))]
-	unsafe fn find_lua_shared() -> (Library, &'static str) {
+	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
 		find_library!("bin/win64/lua_shared.dll")
 		.expect("Failed to load lua_shared.dll")
 	}
 
 	#[cfg(all(target_os = "windows", target_pointer_width = "32"))]
-	unsafe fn find_lua_shared() -> (Library, &'static str) {
+	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
 		find_library!("garrysmod/bin/lua_shared.dll")
 		.or_else(|_| find_library!("bin/lua_shared.dll"))
 		.expect("Failed to load lua_shared.dll")
 	}
 
 	#[cfg(all(target_os = "linux", target_pointer_width = "32"))]
-	unsafe fn find_lua_shared() -> (Library, &'static str) {
+	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
 		find_library!("garrysmod/bin/lua_shared_srv.so")
 		.or_else(|_| find_library!("bin/linux32/lua_shared.so"))
 		.expect("Failed to find lua_shared.so or lua_shared_srv.so")
 	}
 
 	#[cfg(all(target_os = "linux", target_pointer_width = "64"))]
-	unsafe fn find_lua_shared() -> (Library, &'static str) {
+	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
 		find_library!("bin/linux64/lua_shared.so")
 		.expect("Failed to find lua_shared.so")
 	}

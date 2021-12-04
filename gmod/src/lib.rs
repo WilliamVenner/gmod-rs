@@ -39,15 +39,36 @@ pub mod userdata;
 pub mod net;
 
 /// Returns whether this client is running the x86-64 branch
-///
-/// Current implementation checks the contents of the bin/ directory, so this is a blocking operation and requires syscalls, use sparingly
 pub fn is_x86_64() -> bool {
-	use std::path::PathBuf;
-	#[cfg(target_os = "linux")] {
-		PathBuf::from("bin/linux64").is_dir()
+	#[cfg(target_pointer_width = "64")] {
+		// 64-bit can only be x86-64
+		true
 	}
-	#[cfg(target_os = "windows")] {
-		PathBuf::from("bin/win64").is_dir()
+	#[cfg(target_pointer_width = "32")] {
+		lazy_static::lazy_static! {
+			static ref IS_X86_64: bool = {
+				use std::path::PathBuf;
+
+				// Check LuaJIT version
+				unsafe {
+					let (lib, _) = lua::LuaShared::find_lua_shared();
+					if lib.get::<()>(b"luaJIT_version_2_0_4\0").is_ok() {
+						false
+					} else if lib.get::<()>(b"luaJIT_version_2_1_0_beta3\0").is_ok() {
+						true
+					} else {
+						// Check bin folder
+						#[cfg(target_os = "linux")] {
+							PathBuf::from("bin/linux64").is_dir()
+						}
+						#[cfg(target_os = "windows")] {
+							PathBuf::from("bin/win64").is_dir()
+						}
+					}
+				}
+			};
+		}
+		*IS_X86_64
 	}
 }
 
