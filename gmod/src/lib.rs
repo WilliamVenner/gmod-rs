@@ -49,20 +49,29 @@ pub fn is_x86_64() -> bool {
 			static ref IS_X86_64: bool = {
 				use std::path::PathBuf;
 
-				// Check LuaJIT version
-				unsafe {
-					let (lib, _) = lua::LuaShared::find_lua_shared();
-					if lib.get::<()>(b"luaJIT_version_2_0_4\0").is_ok() {
-						false
-					} else if lib.get::<()>(b"luaJIT_version_2_1_0_beta3\0").is_ok() {
-						true
-					} else {
-						// Check bin folder
-						#[cfg(target_os = "linux")] {
-							PathBuf::from("bin/linux64").is_dir()
-						}
-						#[cfg(target_os = "windows")] {
-							PathBuf::from("bin/win64").is_dir()
+				#[cfg(target_os = "windows")] {
+					PathBuf::from("srcds_win64.exe").is_file()
+				}
+				#[cfg(target_os = "linux")] {
+					// Check executable name
+					match std::env::current_exe().expect("Failed to get executable path").file_name().expect("Failed to get executable file name").to_string_lossy().as_ref() {
+						#[cfg(target_os = "windows")]
+						"srcds.exe" => false,
+
+						#[cfg(target_os = "linux")]
+						"srcds_linux" => false,
+
+						#[cfg(target_os = "linux")]
+						"srcds" => true,
+
+						_ => {
+							// Check bin folder
+							#[cfg(target_os = "linux")] {
+								PathBuf::from("bin/linux64").is_dir()
+							}
+							#[cfg(target_os = "windows")] {
+								PathBuf::from("bin/win64").is_dir()
+							}
 						}
 					}
 				}
