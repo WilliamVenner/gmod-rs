@@ -126,7 +126,7 @@ dependencies = [
  "fn_abi",
  "fn_has_this",
  "fn_type_alias",
- "gmod-macros 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gmod-macros 1.0.0",
  "lazy_static",
  "libloading",
  "null_fn",
@@ -144,7 +144,7 @@ dependencies = [
  "fn_abi",
  "fn_has_this",
  "fn_type_alias",
- "gmod-macros 1.0.0",
+ "gmod-macros 1.0.1",
  "gmserverplugin",
  "lazy_static",
  "libloading",
@@ -155,6 +155,8 @@ dependencies = [
 [[package]]
 name = "gmod-macros"
 version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b791745998b09a16260e803bb0cca1a641e9b70e2aae94d7a485d34259b29279"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -163,9 +165,7 @@ dependencies = [
 
 [[package]]
 name = "gmod-macros"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b791745998b09a16260e803bb0cca1a641e9b70e2aae94d7a485d34259b29279"
+version = "1.0.1"
 dependencies = [
  "proc-macro2",
  "quote",
