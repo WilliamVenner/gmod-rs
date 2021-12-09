@@ -13,9 +13,10 @@ categories = ["api-bindings", "external-ffi-bindings", "game-development", "deve
 default = ["hax"]
 hax = ["ctor", "skidscan", "detour", "fn_type_alias", "fn_abi", "cfg_table", "null_fn", "fn_has_this"]
 server-plugin = ["gmserverplugin"]
+gmcl = []
 
 [dependencies]
-gmod-macros = { version = "1.0.1", path = "../gmod-macros" }
+gmod-macros = { version = "1.0.2", path = "../gmod-macros" }
 gmserverplugin = { version = "1", optional = true }
 
 libloading = "0"

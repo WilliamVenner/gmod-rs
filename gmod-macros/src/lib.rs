@@ -6,7 +6,7 @@ extern crate quote;
 
 use proc_macro::TokenStream;
 use quote::ToTokens;
-use syn::{ReturnType, ItemFn};
+use syn::{ReturnType, ItemFn, Attribute};
 
 fn check_lua_function(input: &mut ItemFn) {
 	assert!(input.sig.asyncness.is_none(), "Cannot be async");
@@ -17,11 +17,22 @@ fn check_lua_function(input: &mut ItemFn) {
 	input.sig.abi = Some(syn::parse_quote!(extern "C-unwind"));
 }
 
+fn no_mangle(item_fn: &mut ItemFn) {
+	item_fn.attrs.push(Attribute {
+		path: parse_quote!(no_mangle),
+		tokens: proc_macro2::TokenStream::new(),
+		style: syn::AttrStyle::Outer,
+		pound_token: Default::default(),
+		bracket_token: Default::default(),
+	});
+}
+
 #[proc_macro_attribute]
 pub fn gmod13_open(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
 	let mut input = parse_macro_input!(tokens as ItemFn);
 	check_lua_function(&mut input);
 	input.block.stmts.insert(0, syn::parse2(quote!(#[allow(unused_unsafe)] unsafe { ::gmod::lua::load() })).unwrap());
+	no_mangle(&mut input);
 	input.into_token_stream().into()
 }
 
@@ -29,6 +40,7 @@ pub fn gmod13_open(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
 pub fn gmod13_close(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
 	let mut input = parse_macro_input!(tokens as ItemFn);
 	check_lua_function(&mut input);
+	no_mangle(&mut input);
 	input.into_token_stream().into()
 }
 

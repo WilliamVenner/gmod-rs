@@ -1,6 +1,8 @@
 #![feature(c_unwind)]
 #![feature(thread_id_value)]
 
+#![cfg_attr(feature = "gmcl", feature(internal_output_capture))]
+
 pub use cstr;
 pub use libloading;
 pub use gmod_macros::*;
@@ -37,6 +39,10 @@ pub mod userdata;
 
 /// Net library helpers
 pub mod net;
+
+/// Clientside module helpers
+#[cfg(feature = "gmcl")]
+pub mod gmcl;
 
 /// Returns whether this client is running the x86-64 branch
 pub fn is_x86_64() -> bool {

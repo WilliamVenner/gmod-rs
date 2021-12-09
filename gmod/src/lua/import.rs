@@ -74,10 +74,10 @@ impl LuaError {
 }
 
 #[cfg_attr(not(debug_assertions), repr(transparent))]
-pub struct LuaSharedInterface(UnsafeCell<*mut LuaShared>, #[cfg(debug_assertions)] AtomicI64);
+pub struct LuaSharedInterface(pub(crate) UnsafeCell<*mut LuaShared>, #[cfg(debug_assertions)] AtomicI64);
 impl LuaSharedInterface {
 	#[cfg(debug_assertions)]
-	fn debug_assertions(&self) {
+	pub(crate) fn debug_assertions(&self) {
 		assert!(!unsafe { *self.0.get() }.is_null(), "The Lua state has not been initialized yet. Add `#[gmod::gmod13_open]` to your module's gmod13_open function to fix this. You can also manually load the Lua state with `gmod::load_lua_state()` or `gmod::set_lua_state(*mut c_void)`");
 
 		let thread_id = u64::from(std::thread::current().id().as_u64()) as i64;
