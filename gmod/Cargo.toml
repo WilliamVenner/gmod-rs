@@ -1,6 +1,6 @@
 [package]
 name = "gmod"
-version = "10.2.0"
+version = "10.2.1"
 authors = ["William Venner <william@venner.io>"]
 edition = "2018"
 license = "MIT"

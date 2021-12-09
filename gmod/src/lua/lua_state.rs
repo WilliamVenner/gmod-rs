@@ -19,6 +19,22 @@ impl LuaState {
 		}
 	}
 
+	/// Returns whether this is the clientside Lua state or not.
+	pub unsafe fn is_client(&self) -> bool {
+		self.get_global(crate::lua_string!("CLIENT"));
+		let client = self.get_boolean(-1);
+		self.pop();
+		client
+	}
+
+	/// Returns whether this is the serverside Lua state or not.
+	pub unsafe fn is_server(&self) -> bool {
+		self.get_global(crate::lua_string!("SERVER"));
+		let server = self.get_boolean(-1);
+		self.pop();
+		server
+	}
+
 	/// Returns the Lua string as a slice of bytes.
 	///
 	/// **WARNING:** This will CHANGE the type of the value at the given index to a string.
