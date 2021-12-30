@@ -6,6 +6,6 @@
 
 A swiss army knife for creating binary modules for Garry's Mod in Rust.
 
-# Example
+# Examples
 
-[Click here](https://github.com/WilliamVenner/gmod-rs/tree/master/example/my-first-binary-module) to see an example.
+[Click here](https://github.com/WilliamVenner/gmod-rs/tree/master/examples/) to see examples.

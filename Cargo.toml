@@ -4,5 +4,6 @@ members = [
 	"gmod-macros"
 ]
 exclude = [
-	"example/my-first-binary-module"
+	"examples/my-first-binary-module",
+	"examples/printing-to-console"
 ]
