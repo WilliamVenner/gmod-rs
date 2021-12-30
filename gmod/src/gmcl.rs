@@ -1,9 +1,28 @@
-use std::{sync::{Arc, Mutex, TryLockError}, time::Duration, os::raw::c_char};
+use std::{sync::{Arc, Mutex, TryLockError, atomic::AtomicBool}, time::Duration, os::raw::c_char, thread::JoinHandle};
+
+lazy_static::lazy_static! {
+	static ref STDOUT_OVERRIDE_THREAD: Mutex<Option<JoinHandle<()>>> = Mutex::new(None);
+}
+
+static SHUTDOWN_FLAG: AtomicBool = AtomicBool::new(false);
 
 /// This function will **permanently** redirect stdout to the client console.
 ///
 /// This allows for `println!()` and friends to print to the client console.
+///
+/// # IMPORTANT
+///
+/// You must undo this action when your module is unloaded or the game will crash.
+///
+/// This will be done automatically for you if you use the `#[gmod13_close]` attribute macro, otherwise, please call `gmod::gmcl::restore_stdout()` in your custom `gmod13_close` function.
 pub fn override_stdout() {
+	let mut join_handle = STDOUT_OVERRIDE_THREAD.lock().unwrap();
+
+	if join_handle.is_some() {
+		// We don't need to override twice
+		return;
+	}
+
 	unsafe {
 		let (_lib, _path) = crate::open_library!("tier0").expect("Failed to open tier0.dll");
 
@@ -28,7 +47,7 @@ pub fn override_stdout() {
 		let output_buf_ref = output_buf.clone();
 
 		// This is actually a really dumb implementation, but appears to be the only way, unfortunately.
-		std::thread::spawn(move || loop {
+		join_handle.replace(std::thread::spawn(move || loop {
 			match output_buf.try_lock() {
 				Ok(mut data) => if !data.is_empty() {
 					data.push(0); // cheeky
@@ -43,9 +62,23 @@ pub fn override_stdout() {
 					continue
 				}
 			}
+			if SHUTDOWN_FLAG.load(std::sync::atomic::Ordering::Relaxed) {
+				break;
+			}
 			std::thread::sleep(Duration::from_millis(250));
-		});
+		}));
 
 		std::io::set_output_capture(Some(output_buf_ref));
 	};
+}
+
+/// Undoes `gmod::gmcl::override_stdout`. You must call this function in a custom `gmod13_close` function (you are not using the crate's provided `#[gmod13_close]` attribute macro) if you override stdout.
+pub fn restore_stdout() {
+	SHUTDOWN_FLAG.store(true, std::sync::atomic::Ordering::Release);
+
+	if let Some(join_handle) = STDOUT_OVERRIDE_THREAD.lock().unwrap().take() {
+		let _ = join_handle.join();
+	}
+
+	std::io::set_output_capture(None);
 }

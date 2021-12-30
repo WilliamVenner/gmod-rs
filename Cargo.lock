@@ -135,7 +135,7 @@ dependencies = [
 
 [[package]]
 name = "gmod"
-version = "10.2.1"
+version = "10.2.2"
 dependencies = [
  "cfg_table 1.0.0",
  "cstr",
@@ -144,7 +144,7 @@ dependencies = [
  "fn_abi",
  "fn_has_this",
  "fn_type_alias",
- "gmod-macros 1.0.2",
+ "gmod-macros 1.0.3",
  "gmserverplugin",
  "lazy_static",
  "libloading",
@@ -165,7 +165,7 @@ dependencies = [
 
 [[package]]
 name = "gmod-macros"
-version = "1.0.2"
+version = "1.0.3"
 dependencies = [
  "proc-macro2",
  "quote",

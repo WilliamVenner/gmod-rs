@@ -40,6 +40,16 @@ pub fn gmod13_open(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
 pub fn gmod13_close(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
 	let mut input = parse_macro_input!(tokens as ItemFn);
 	check_lua_function(&mut input);
+
+	#[cfg(feature = "gmcl")] {
+		let stmts = std::mem::take(&mut input.block.stmts);
+		input.block.stmts = vec![syn::parse2(quote!({
+			let ret = {#(#stmts);*};
+			::gmod::gmcl::restore_stdout();
+			ret
+		})).unwrap()];
+	}
+
 	no_mangle(&mut input);
 	input.into_token_stream().into()
 }
