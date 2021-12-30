@@ -1,0 +1,11 @@
+[package]
+name = "printing-to-console"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+gmod = {version = "10.2.1", features = ["gmcl"], default-features = false}
