@@ -37,11 +37,14 @@ pub enum LuaError {
 	Unknown(i32),
 }
 
-/// Converts a string literal to a Lua-compatible NUL terminated string at compile time.
+/// Converts a string literal or identifier to a Lua-compatible NUL terminated string at compile time.
 #[macro_export]
 macro_rules! lua_string {
 	( $str:literal ) => {
 		$crate::cstr::cstr!($str).as_ptr()
+	};
+	( $name:ident ) => {
+		concat!(stringify!($name), "\0").as_ptr() as *const i8
 	};
 }
 
