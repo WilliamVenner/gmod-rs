@@ -5,12 +5,6 @@ use std::{cell::UnsafeCell, ffi::c_void};
 
 use libloading::{Library, Symbol};
 
-macro_rules! find_library {
-	($path:literal) => {
-		Library::new($path).map(|lib| (lib, $path))
-	};
-}
-
 use super::{LuaError, State as LuaState, LuaDebug};
 
 pub type LuaInt = isize;
@@ -250,27 +244,31 @@ impl LuaShared {
 
 	#[cfg(all(target_os = "windows", target_pointer_width = "64"))]
 	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
-		find_library!("bin/win64/lua_shared.dll")
+		crate::open_library_raw!("bin/win64/lua_shared.dll")
 		.expect("Failed to load lua_shared.dll")
 	}
 
 	#[cfg(all(target_os = "windows", target_pointer_width = "32"))]
 	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
-		find_library!("garrysmod/bin/lua_shared.dll")
-		.or_else(|_| find_library!("bin/lua_shared.dll"))
+		crate::__private__gmod_rs__try_chained_open! {
+			crate::open_library_raw!("garrysmod/bin/lua_shared.dll"),
+			crate::open_library_raw!("bin/lua_shared.dll")
+		}
 		.expect("Failed to load lua_shared.dll")
 	}
 
 	#[cfg(all(target_os = "linux", target_pointer_width = "32"))]
 	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
-		find_library!("garrysmod/bin/lua_shared_srv.so")
-		.or_else(|_| find_library!("bin/linux32/lua_shared.so"))
+		crate::__private__gmod_rs__try_chained_open! {
+			crate::open_library_raw!("garrysmod/bin/lua_shared_srv.so"),
+			crate::open_library_raw!("bin/linux32/lua_shared.so")
+		}
 		.expect("Failed to find lua_shared.so or lua_shared_srv.so")
 	}
 
 	#[cfg(all(target_os = "linux", target_pointer_width = "64"))]
 	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
-		find_library!("bin/linux64/lua_shared.so")
+		crate::open_library_raw!("bin/linux64/lua_shared.so")
 		.expect("Failed to find lua_shared.so")
 	}
 }

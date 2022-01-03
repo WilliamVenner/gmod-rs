@@ -80,5 +80,5 @@ pub fn restore_stdout() {
 		let _ = join_handle.join();
 	}
 
-	std::io::set_output_capture(None);
+	std::io::set_output_capture(None); // TODO fix side effect
 }

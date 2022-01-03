@@ -98,7 +98,10 @@ pub fn is_x86_64() -> bool {
 #[macro_export]
 macro_rules! open_library_raw {
 	($($path:literal),+) => {
-		$crate::libloading::Library::new(concat!($($path),+)).map(|lib| (lib, concat!($($path),+)))
+		match $crate::libloading::Library::new(concat!($($path),+)) {
+			Ok(lib) => Ok((lib, concat!($($path),+))),
+			Err(err) => Err((err, concat!($($path),+)))
+		}
 	}
 }
 
@@ -119,28 +122,36 @@ macro_rules! open_library_srv {
 		}
 
 		#[cfg(all(target_os = "windows", target_pointer_width = "64"))] {
-			$crate::open_library_raw!("bin/win64/", $name, ".dll")
+			$crate::__private__gmod_rs__try_chained_open! {
+				$crate::open_library_raw!("bin/win64/", $name, ".dll")
+			}
 		}
 		#[cfg(all(target_os = "windows", target_pointer_width = "32"))] {
-			$crate::open_library_raw!("bin/", $name, ".dll")
-			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, ".dll"))
+			$crate::__private__gmod_rs__try_chained_open! {
+				$crate::open_library_raw!("bin/", $name, ".dll"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, ".dll")
+			}
 		}
 
 		#[cfg(all(target_os = "linux", target_pointer_width = "64"))] {
-			$crate::open_library_raw!("bin/linux64/", $name, ".so")
-			.or_else(|_| $crate::open_library_raw!("bin/linux64/lib", $name, ".so"))
+			$crate::__private__gmod_rs__try_chained_open! {
+				$crate::open_library_raw!("bin/linux64/", $name, ".so"),
+				$crate::open_library_raw!("bin/linux64/lib", $name, ".so")
+			}
 		}
 		#[cfg(all(target_os = "linux", target_pointer_width = "32"))] {
-			$crate::open_library_raw!("bin/linux32/", $name, ".so")
-			.or_else(|_| $crate::open_library_raw!("bin/linux32/lib", $name, ".so"))
-			.or_else(|_| $crate::open_library_raw!("bin/", $name, "_srv.so"))
-			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, "_srv.so"))
-			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, "_srv.so"))
-			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.so"))
-			.or_else(|_| $crate::open_library_raw!("bin/", $name, ".so"))
-			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, ".so"))
-			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, ".so"))
-			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/lib", $name, ".so"))
+			$crate::__private__gmod_rs__try_chained_open! {
+				$crate::open_library_raw!("bin/linux32/", $name, ".so"),
+				$crate::open_library_raw!("bin/linux32/lib", $name, ".so"),
+				$crate::open_library_raw!("bin/", $name, "_srv.so"),
+				$crate::open_library_raw!("bin/lib", $name, "_srv.so"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, "_srv.so"),
+				$crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.so"),
+				$crate::open_library_raw!("bin/", $name, ".so"),
+				$crate::open_library_raw!("bin/lib", $name, ".so"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, ".so"),
+				$crate::open_library_raw!("garrysmod/bin/lib", $name, ".so"),
+			}
 		}
 	}};
 }
@@ -162,28 +173,74 @@ macro_rules! open_library {
 		}
 
 		#[cfg(all(target_os = "windows", target_pointer_width = "64"))] {
-			$crate::open_library_raw!("bin/win64/", $name, ".dll")
+			$crate::__private__gmod_rs__try_chained_open! {
+				$crate::open_library_raw!("bin/win64/", $name, ".dll")
+			}
 		}
 		#[cfg(all(target_os = "windows", target_pointer_width = "32"))] {
-			$crate::open_library_raw!("bin/", $name, ".dll")
-			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, ".dll"))
+			$crate::__private__gmod_rs__try_chained_open! {
+				$crate::open_library_raw!("bin/", $name, ".dll"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, ".dll"),
+			}
 		}
 
 		#[cfg(all(target_os = "linux", target_pointer_width = "64"))] {
-			$crate::open_library_raw!("bin/linux64/", $name, ".so")
-			.or_else(|_| $crate::open_library_raw!("bin/linux64/lib", $name, ".so"))
+			$crate::__private__gmod_rs__try_chained_open! {
+				$crate::open_library_raw!("bin/linux64/", $name, ".so"),
+				$crate::open_library_raw!("bin/linux64/lib", $name, ".so"),
+			}
 		}
 		#[cfg(all(target_os = "linux", target_pointer_width = "32"))] {
-			$crate::open_library_raw!("bin/linux32/", $name, ".so")
-			.or_else(|_| $crate::open_library_raw!("bin/linux32/lib", $name, ".so"))
-			.or_else(|_| $crate::open_library_raw!("bin/", $name, ".so"))
-			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, ".so"))
-			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, ".so"))
-			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/lib", $name, ".so"))
-			.or_else(|_| $crate::open_library_raw!("bin/", $name, "_srv.so"))
-			.or_else(|_| $crate::open_library_raw!("bin/lib", $name, "_srv.so"))
-			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/", $name, "_srv.so"))
-			.or_else(|_| $crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.so"))
+			$crate::__private__gmod_rs__try_chained_open! {
+				$crate::open_library_raw!("bin/linux32/", $name, ".so"),
+				$crate::open_library_raw!("bin/linux32/lib", $name, ".so"),
+				$crate::open_library_raw!("bin/", $name, ".so"),
+				$crate::open_library_raw!("bin/lib", $name, ".so"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, ".so"),
+				$crate::open_library_raw!("garrysmod/bin/lib", $name, ".so"),
+				$crate::open_library_raw!("bin/", $name, "_srv.so"),
+				$crate::open_library_raw!("bin/lib", $name, "_srv.so"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, "_srv.so"),
+				$crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.so"),
+			}
 		}
 	}};
+}
+
+#[derive(Default)]
+#[doc(hidden)]
+pub struct OpenGmodLibraryErrs(pub std::collections::HashMap<&'static str, libloading::Error>);
+impl std::error::Error for OpenGmodLibraryErrs {}
+impl std::fmt::Display for OpenGmodLibraryErrs {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		writeln!(f, "")?;
+		for (path, err) in &self.0 {
+			writeln!(f, "{} = {}", path, err)?;
+		}
+		writeln!(f, "")?;
+		Ok(())
+	}
+}
+impl std::fmt::Debug for OpenGmodLibraryErrs {
+	#[inline]
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		std::fmt::Display::fmt(self, f)
+	}
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __private__gmod_rs__try_chained_open {
+	{$($expr:expr),+} => {
+		loop {
+			let mut errors = $crate::OpenGmodLibraryErrs::default();
+			$(
+				match $expr {
+					Ok(val) => break Ok(val),
+					Err((err, path)) => { errors.0.insert(path, err); }
+				}
+			)+
+			break Err(errors);
+		}
+	};
 }
