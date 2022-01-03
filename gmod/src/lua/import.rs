@@ -261,7 +261,8 @@ impl LuaShared {
 	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
 		crate::__private__gmod_rs__try_chained_open! {
 			crate::open_library_raw!("garrysmod/bin/lua_shared_srv.so"),
-			crate::open_library_raw!("bin/linux32/lua_shared.so")
+			crate::open_library_raw!("bin/linux32/lua_shared.so"),
+			crate::open_library_raw!("garrysmod/bin/lua_shared.so")
 		}
 		.expect("Failed to find lua_shared.so or lua_shared_srv.so")
 	}

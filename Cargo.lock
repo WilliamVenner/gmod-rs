@@ -135,7 +135,7 @@ dependencies = [
 
 [[package]]
 name = "gmod"
-version = "11.0.0"
+version = "11.0.1"
 dependencies = [
  "cfg_table 1.0.0",
  "cstr",
