@@ -479,7 +479,7 @@ impl LuaState {
 		if has_metatable {
 			self.push_value(-2);
 			self.set_metatable(-2);
-			self.remove(-2);
+			self.remove(self.get_top() - 1);
 		}
 
 		ptr.write(data);
