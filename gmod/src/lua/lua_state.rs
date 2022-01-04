@@ -180,6 +180,7 @@ impl LuaState {
 			self.get_global(crate::lua_string!("ErrorNoHaltWithStack"));
 			if self.is_nil(-1) {
 				eprintln!("[ERROR] {:?}", self.get_string(-2));
+				self.pop_n(2);
 				return false;
 			}
 			self.push_value(-2);
