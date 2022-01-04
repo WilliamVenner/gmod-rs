@@ -572,13 +572,13 @@ impl LuaState {
 			},
 			"boolean" => {
 				self.push_value(index);
-				let boolean = self.get_boolean(index);
+				let boolean = self.get_boolean(-1);
 				self.pop();
 				format!("{}", boolean)
 			},
 			"number" => {
 				self.push_value(index);
-				let n = self.to_number(index);
+				let n = self.to_number(-1);
 				self.pop();
 				format!("{}", n)
 			},
