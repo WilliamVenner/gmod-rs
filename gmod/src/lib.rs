@@ -1,3 +1,5 @@
+//! [Available Lua Functions](https://docs.rs/gmod/latest/gmod/lua/struct.State.html)
+
 #![feature(c_unwind)]
 #![feature(thread_id_value)]
 
