@@ -239,7 +239,12 @@ impl LuaState {
 	}
 
 	pub unsafe fn lua_type_name(&self, lua_type_id: i32) -> Cow<'_, str> {
+		let hackfix = self.get_top(); // https://github.com/Facepunch/garrysmod-issues/issues/5134
+
 		let type_str_ptr = (LUA_SHARED.lua_typename)(*self, lua_type_id);
+
+		self.pop_n((self.get_top() - hackfix).max(0));
+
 		let type_str = std::ffi::CStr::from_ptr(type_str_ptr);
 		type_str.to_string_lossy()
 	}
