@@ -70,8 +70,12 @@ macro_rules! lua_stack_guard {
 	( $lua:ident => $code:block ) => {{
 		#[cfg(debug_assertions)] {
 			let top = $lua.get_top();
-			$code
-			assert_eq!(top, $lua.get_top(), "Stack is dirty!");
+			let ret = (|| $code)();
+			if top != $lua.get_top() {
+				$lua.dump_stack();
+				panic!("Stack is dirty!");
+			}
+			ret
 		}
 
 		#[cfg(not(debug_assertions))]
