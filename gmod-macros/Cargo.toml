@@ -1,6 +1,6 @@
 [package]
 name = "gmod-macros"
-version = "1.0.3"
+version = "1.0.4"
 authors = ["William Venner <william@venner.io>"]
 edition = "2018"
 license = "MIT"

@@ -44,7 +44,7 @@ pub fn gmod13_close(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
 	#[cfg(feature = "gmcl")] {
 		let stmts = std::mem::take(&mut input.block.stmts);
 		input.block.stmts = vec![syn::parse2(quote!({
-			let ret = {#(#stmts);*};
+			let ret = (|| {#(#stmts);*})();
 			::gmod::gmcl::restore_stdout();
 			ret
 		})).unwrap()];
