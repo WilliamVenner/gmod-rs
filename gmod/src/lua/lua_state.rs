@@ -35,6 +35,14 @@ impl LuaState {
 		server
 	}
 
+	/// Returns whether this is the menu Lua state or not.
+	pub unsafe fn is_menu(&self) -> bool {
+		self.get_global(crate::lua_string!("MENU_DLL"));
+		let menu = self.get_boolean(-1);
+		self.pop();
+		menu
+	}
+
 	/// Returns the Lua string as a slice of bytes.
 	///
 	/// **WARNING:** This will CHANGE the type of the value at the given index to a string.
