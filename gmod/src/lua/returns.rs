@@ -1,4 +1,4 @@
-use std::num::NonZeroI32;
+use std::{num::NonZeroI32, borrow::Cow};
 
 #[repr(transparent)]
 pub struct ValuesReturned(pub i32);
@@ -44,12 +44,21 @@ impl From<Option<NonZeroI32>> for ValuesReturned {
 	}
 }
 
-impl<E: std::fmt::Debug> From<Result<i32, E>> for ValuesReturned {
+pub trait DisplayLuaError {
+	fn display_lua_error<'a>(&'a self) -> Cow<'a, str>;
+}
+impl<E: std::fmt::Debug> DisplayLuaError for E {
+	#[inline(always)]
+	fn display_lua_error<'a>(&'a self) -> Cow<'a, str> {
+		Cow::Owned(format!("{:?}", self))
+	}
+}
+impl<E: DisplayLuaError> From<Result<i32, E>> for ValuesReturned {
 	#[inline(always)]
 	fn from(res: Result<i32, E>) -> ValuesReturned {
 		match res {
 			Ok(vals) => ValuesReturned(vals),
-			Err(err) => unsafe { super::state().error(&format!("{:?}", err)) }
+			Err(err) => unsafe { super::state().error(err.display_lua_error().as_ref()) }
 		}
 	}
 }
