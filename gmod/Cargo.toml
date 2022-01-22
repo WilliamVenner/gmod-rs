@@ -2,7 +2,7 @@
 name = "gmod"
 version = "11.1.1"
 authors = ["William Venner <william@venner.io>"]
-edition = "2018"
+edition = "2021"
 license = "MIT"
 description = "A swiss army knife for creating binary modules for Garry's Mod in Rust"
 repository = "https://github.com/WilliamVenner/gmod-rs"

@@ -6,6 +6,9 @@ pub use import::*;
 mod lua_state;
 pub use lua_state::LuaState as State;
 
+mod push;
+pub use push::*;
+
 #[derive(Debug, Clone)]
 pub enum LuaError {
 	/// Out of memory
@@ -73,7 +76,21 @@ macro_rules! lua_stack_guard {
 			let ret = (|| $code)();
 			if top != $lua.get_top() {
 				$lua.dump_stack();
-				panic!("Stack is dirty!");
+				panic!("Stack is dirty! Expected the stack to have {} elements, but it has {}!", top, $lua.get_top());
+			}
+			ret
+		}
+
+		#[cfg(not(debug_assertions))]
+		$code
+	}};
+
+	( $lua:ident => $elem:literal => $code:block ) => {{
+		#[cfg(debug_assertions)] {
+			let ret = (|| $code)();
+			if $lua.get_top() != $elem {
+				$lua.dump_stack();
+				panic!("Stack is dirty! Expected the stack to have ", $elem, " (fixed size) elements, but it has {}!", $lua.get_top());
 			}
 			ret
 		}

@@ -2,7 +2,7 @@
 name = "gmod-macros"
 version = "1.0.4"
 authors = ["William Venner <william@venner.io>"]
-edition = "2018"
+edition = "2021"
 license = "MIT"
 description = "Proc macros for gmod-rs"
 repository = "https://github.com/WilliamVenner/gmod-rs"

@@ -167,6 +167,16 @@ impl LuaState {
 	}
 
 	#[inline(always)]
+	pub unsafe fn push_thread(&self) -> i32 {
+		(LUA_SHARED.lua_pushthread)(*self)
+	}
+
+	#[inline(always)]
+	pub unsafe fn to_thread(&self, index: i32) -> State {
+		(LUA_SHARED.lua_tothread)(*self, index)
+	}
+
+	#[inline(always)]
 	pub unsafe fn pcall(&self, nargs: i32, nresults: i32, errfunc: i32) -> i32 {
 		(LUA_SHARED.lua_pcall)(*self, nargs, nresults, errfunc)
 	}
@@ -177,18 +187,27 @@ impl LuaState {
 	pub unsafe fn pcall_ignore(&self, nargs: i32, nresults: i32) -> bool {
 		let res = self.pcall(nargs, nresults, 0);
 		if res == LUA_ERRRUN {
-			self.get_global(crate::lua_string!("ErrorNoHaltWithStack"));
-			if self.is_nil(-1) {
-				eprintln!("[ERROR] {:?}", self.get_string(-2));
-				self.pop_n(2);
-				return false;
-			}
-			self.push_value(-2);
-			self.call(1, 0);
+			crate::lua_stack_guard!(self => {
+				self.get_global(crate::lua_string!("ErrorNoHaltWithStack"));
+				if self.is_nil(-1) {
+					eprintln!("[ERROR] {:?}", self.get_string(-2));
+					self.pop();
+				} else {
+					#[cfg(debug_assertions)] {
+						self.push_string(&format!("[pcall_ignore] {}", self.get_string(-2).expect("Expected a string here")));
+					}
+					#[cfg(not(debug_assertions))] {
+						self.push_value(-2);
+					}
+
+					self.call(1, 0);
+				}
+			});
 			self.pop();
-			return false;
+			false
+		} else {
+			true
 		}
-		true
 	}
 
 	pub unsafe fn load_string(&self, src: LuaString) -> Result<(), LuaError> {
@@ -450,9 +469,25 @@ impl LuaState {
 		(LUA_SHARED.lua_touserdata)(*self, index)
 	}
 
+	#[inline(always)]
+	pub unsafe fn coroutine_new(&self) -> State {
+		(LUA_SHARED.lua_newthread)(*self)
+	}
+
+	#[inline(always)]
+	pub unsafe fn coroutine_yield(&self, nresults: i32) -> i32 {
+		(LUA_SHARED.lua_yield)(*self, nresults)
+	}
+
+	#[inline(always)]
+	pub unsafe fn coroutine_resume(&self, narg: i32) -> i32 {
+		(LUA_SHARED.lua_resume)(*self, narg)
+	}
+
 	/// Creates a new table in the registry with the given `name` as the key if it doesn't already exist, and pushes it onto the stack.
 	///
 	/// Returns if the metatable was already present in the registry.
+	#[inline(always)]
 	pub unsafe fn new_metatable(&self, name: LuaString) -> bool {
 		(LUA_SHARED.lual_newmetatable)(*self, name) == 0
 	}
@@ -479,6 +514,7 @@ impl LuaState {
 		if has_metatable {
 			self.push_value(-2);
 			self.set_metatable(-2);
+			self.remove(self.get_top() - 1);
 			self.remove(self.get_top() - 1);
 		}
 

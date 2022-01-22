@@ -164,6 +164,11 @@ pub struct LuaShared {
 	pub lua_topointer: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32) -> *const c_void>,
 	pub lua_newuserdata: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, size: usize) -> *mut c_void>,
 	pub lual_newmetatable: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, name: LuaString) -> i32>,
+	pub lua_resume: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, narg: i32) -> i32>,
+	pub lua_newthread: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState) -> LuaState>,
+	pub lua_yield: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, nresults: i32) -> i32>,
+	pub lua_pushthread: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState) -> i32>,
+	pub lua_tothread: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32) -> LuaState>,
 }
 unsafe impl Sync for LuaShared {}
 impl LuaShared {
@@ -231,6 +236,11 @@ impl LuaShared {
 				lua_topointer: find_symbol!("lua_topointer"),
 				lua_newuserdata: find_symbol!("lua_newuserdata"),
 				lual_newmetatable: find_symbol!("luaL_newmetatable"),
+				lua_resume: find_symbol!("lua_resume_real"),
+				lua_newthread: find_symbol!("lua_newthread"),
+				lua_yield: find_symbol!("lua_yield"),
+				lua_pushthread: find_symbol!("lua_pushthread"),
+				lua_tothread: find_symbol!("lua_tothread"),
 			}
 		}
 	}
