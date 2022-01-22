@@ -8,6 +8,16 @@ use proc_macro::TokenStream;
 use quote::ToTokens;
 use syn::ItemFn;
 
+macro_rules! wrap_compile_error {
+	($input:ident, $code:expr) => {{
+		let orig_tokens = $input.clone();
+		match (|| -> Result<TokenStream, syn::Error> { $code })() {
+			Ok(tokens) => tokens,
+			Err(_) => return orig_tokens
+		}
+	}};
+}
+
 fn check_lua_function(input: &mut ItemFn) {
 	assert!(input.sig.asyncness.is_none(), "Cannot be async");
 	assert!(input.sig.constness.is_none(), "Cannot be const");
@@ -24,66 +34,72 @@ fn genericify_return(item_fn: &mut ItemFn) {
 
 #[proc_macro_attribute]
 pub fn gmod13_open(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
-	let mut input = parse_macro_input!(tokens as ItemFn);
+	wrap_compile_error!(tokens, {
+		let mut input = syn::parse::<ItemFn>(tokens)?;
 
-	let lua_ident = format_ident!("{}", match &input.sig.inputs[0] {
-		syn::FnArg::Typed(arg) => arg.pat.to_token_stream().to_string(),
-		_ => unreachable!(),
-	});
+		let lua_ident = format_ident!("{}", match &input.sig.inputs[0] {
+			syn::FnArg::Typed(arg) => arg.pat.to_token_stream().to_string(),
+			_ => unreachable!(),
+		});
 
-	// Capture the Lua state
-	input.block.stmts.insert(0, syn::parse2(quote!(::gmod::lua::__set_state__internal(#lua_ident);)).unwrap());
+		// Capture the Lua state
+		input.block.stmts.insert(0, syn::parse2(quote!(::gmod::lua::__set_state__internal(#lua_ident);)).unwrap());
 
-	// Load lua_shared
-	input.block.stmts.insert(0, syn::parse2(quote!(#[allow(unused_unsafe)] unsafe { ::gmod::lua::load() })).unwrap());
+		// Load lua_shared
+		input.block.stmts.insert(0, syn::parse2(quote!(#[allow(unused_unsafe)] unsafe { ::gmod::lua::load() })).unwrap());
 
-	// Make sure it's valid
-	check_lua_function(&mut input);
+		// Make sure it's valid
+		check_lua_function(&mut input);
 
-	// No mangling
-	input.attrs.push(parse_quote!(#[no_mangle]));
+		// No mangling
+		input.attrs.push(parse_quote!(#[no_mangle]));
 
-	// Make the return type nice and dynamic
-	genericify_return(&mut input);
+		// Make the return type nice and dynamic
+		genericify_return(&mut input);
 
-	input.into_token_stream().into()
+		Ok(input.into_token_stream().into())
+	})
 }
 
 #[proc_macro_attribute]
 pub fn gmod13_close(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
-	let mut input = parse_macro_input!(tokens as ItemFn);
+	wrap_compile_error!(tokens, {
+		let mut input = syn::parse::<ItemFn>(tokens)?;
 
-	// Make sure it's valid
-	check_lua_function(&mut input);
+		// Make sure it's valid
+		check_lua_function(&mut input);
 
-	// No mangling
-	input.attrs.push(parse_quote!(#[no_mangle]));
+		// No mangling
+		input.attrs.push(parse_quote!(#[no_mangle]));
 
-	// Shutdown gmcl thread if it's running
-	#[cfg(feature = "gmcl")] {
-		let stmts = std::mem::take(&mut input.block.stmts);
-		input.block.stmts = vec![syn::parse2(quote!({
-			let ret = (|| {#(#stmts);*})();
-			::gmod::gmcl::restore_stdout();
-			ret
-		})).unwrap()];
-	}
+		// Shutdown gmcl thread if it's running
+		#[cfg(feature = "gmcl")] {
+			let stmts = std::mem::take(&mut input.block.stmts);
+			input.block.stmts = vec![syn::parse2(quote!({
+				let ret = (|| {#(#stmts);*})();
+				::gmod::gmcl::restore_stdout();
+				ret
+			})).unwrap()];
+		}
 
-	// Make the return type nice and dynamic
-	genericify_return(&mut input);
+		// Make the return type nice and dynamic
+		genericify_return(&mut input);
 
-	input.into_token_stream().into()
+		Ok(input.into_token_stream().into())
+	})
 }
 
 #[proc_macro_attribute]
 pub fn lua_function(_attr: TokenStream, tokens: TokenStream) -> TokenStream {
-	let mut input = parse_macro_input!(tokens as ItemFn);
+	wrap_compile_error!(tokens, {
+		let mut input = syn::parse::<ItemFn>(tokens)?;
 
-	// Make sure it's valid
-	check_lua_function(&mut input);
+		// Make sure it's valid
+		check_lua_function(&mut input);
 
-	// Make the return type nice and dynamic
-	genericify_return(&mut input);
+		// Make the return type nice and dynamic
+		genericify_return(&mut input);
 
-	input.into_token_stream().into()
+		Ok(input.into_token_stream().into())
+	})
 }

@@ -1,6 +1,6 @@
 [package]
 name = "gmod"
-version = "12.0.0"
+version = "12.0.1"
 authors = ["William Venner <william@venner.io>"]
 edition = "2021"
 license = "MIT"
@@ -16,7 +16,7 @@ server-plugin = ["gmserverplugin"]
 gmcl = ["gmod-macros/gmcl"]
 
 [dependencies]
-gmod-macros = { version = "2.0.0", path = "../gmod-macros" }
+gmod-macros = { version = "2.0.1", path = "../gmod-macros" }
 gmserverplugin = { version = "1", optional = true }
 
 libloading = "0"
