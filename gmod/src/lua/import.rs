@@ -5,7 +5,7 @@ use std::{cell::UnsafeCell, ffi::c_void};
 
 use libloading::{Library, Symbol};
 
-use super::{LuaError, State as LuaState, LuaDebug};
+use super::{LuaError, State as LuaState, LuaDebug, returns::ValuesReturned};
 
 pub type LuaInt = isize;
 pub type LuaSize = usize;
@@ -93,6 +93,7 @@ impl LuaSharedInterface {
 impl std::ops::Deref for LuaSharedInterface {
 	type Target = LuaShared;
 
+	#[inline]
 	fn deref(&self) -> &Self::Target {
 		#[cfg(debug_assertions)]
 		self.debug_assertions();
@@ -101,6 +102,7 @@ impl std::ops::Deref for LuaSharedInterface {
 	}
 }
 impl std::ops::DerefMut for LuaSharedInterface {
+	#[inline]
 	fn deref_mut(&mut self) -> &mut Self::Target {
 		#[cfg(debug_assertions)]
 		self.debug_assertions();

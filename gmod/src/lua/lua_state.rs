@@ -522,6 +522,7 @@ impl LuaState {
 		ptr
 	}
 
+	#[cold]
 	pub unsafe fn error<S: AsRef<str>>(&self, msg: S) -> ! {
 		self.push_string(msg.as_ref());
 		(LUA_SHARED.lua_error)(*self);
@@ -625,6 +626,7 @@ impl LuaState {
 impl std::ops::Deref for LuaState {
 	type Target = *mut std::ffi::c_void;
 
+	#[inline(always)]
 	fn deref(&self) -> &Self::Target {
 		&self.0
 	}
