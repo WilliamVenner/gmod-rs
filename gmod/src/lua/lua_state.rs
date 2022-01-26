@@ -7,7 +7,7 @@ use crate::userdata::TaggedUserData;
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug)]
 pub struct LuaState(pub *mut std::ffi::c_void);
-unsafe impl Send for LuaState {}
+
 impl LuaState {
 	pub unsafe fn new() -> Result<Self, LuaError> {
 		let lua = (LUA_SHARED.lual_newstate)();
