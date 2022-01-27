@@ -22,12 +22,6 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "cfg_table"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "49f3690291e34881a89ceb8e80802f1582f29b1361fd476eeefb4e89dd6a121e"
-
-[[package]]
-name = "cfg_table"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78518bef4e5cc70a69a0bd1905594f8033b2f7492c9d7c0f173208c0945c30a2"
@@ -115,18 +109,18 @@ dependencies = [
 
 [[package]]
 name = "gmod"
-version = "8.0.0"
+version = "12.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "715c1eec3ce86b2871086e9577f6e6a68ea1e58a188422826d50d18f3d15d0e4"
+checksum = "a3573d8d390480fc201b868996f348812fda75351ffd12efc140a1df3459a944"
 dependencies = [
- "cfg_table 0.1.1",
+ "cfg_table",
  "cstr",
  "ctor",
  "detour",
  "fn_abi",
  "fn_has_this",
  "fn_type_alias",
- "gmod-macros 1.0.0",
+ "gmod-macros 2.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static",
  "libloading",
  "null_fn",
@@ -135,9 +129,9 @@ dependencies = [
 
 [[package]]
 name = "gmod"
-version = "13.0.0"
+version = "14.0.0"
 dependencies = [
- "cfg_table 1.0.0",
+ "cfg_table",
  "cstr",
  "ctor",
  "detour",
@@ -154,9 +148,7 @@ dependencies = [
 
 [[package]]
 name = "gmod-macros"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b791745998b09a16260e803bb0cca1a641e9b70e2aae94d7a485d34259b29279"
+version = "2.0.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -166,6 +158,8 @@ dependencies = [
 [[package]]
 name = "gmod-macros"
 version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f379e64e2b37dc89becb8ac4e1a67211a1a8989b866a71d8365dc16459224a8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -174,11 +168,11 @@ dependencies = [
 
 [[package]]
 name = "gmserverplugin"
-version = "1.0.0"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "481dc5ce867d0ac9c140b3c900e97ff532436045f3d29c8e5d51e8df3b64b336"
+checksum = "671fbd0ef21d6ee8c4b980ec8a814c4f0ca87317bc7efbaa97413741369bb828"
 dependencies = [
- "gmod 8.0.0",
+ "gmod 12.0.1",
 ]
 
 [[package]]

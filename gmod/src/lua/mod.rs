@@ -154,6 +154,10 @@ pub unsafe fn state() -> State {
 #[allow(non_snake_case)]
 pub fn __set_state__internal(state: State) {
 	LUA.with(|cell| {
+		#[cfg(debug_assertions)]
 		cell.set(Some(state));
+
+		#[cfg(not(debug_assertions))]
+		cell.set(state);
 	})
 }
