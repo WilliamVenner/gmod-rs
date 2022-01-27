@@ -72,7 +72,7 @@ pub struct LuaSharedInterface(pub(crate) UnsafeCell<*mut LuaShared>, #[cfg(debug
 impl LuaSharedInterface {
 	#[cfg(debug_assertions)]
 	pub(crate) fn debug_assertions(&self) {
-		assert!(!unsafe { *self.0.get() }.is_null(), "The Lua state has not been initialized yet. Add `#[gmod::gmod13_open]` to your module's gmod13_open function to fix this. You can also manually load the Lua state with `gmod::load_lua_state()` or `gmod::set_lua_state(*mut c_void)`");
+		assert!(!unsafe { *self.0.get() }.is_null(), "The Lua state has not been initialized yet. Add `#[gmod::gmod13_open]` to your module's gmod13_open function to fix this. You can also manually set the Lua state with `gmod::set_lua_state(*mut c_void)`");
 
 		let thread_id = u64::from(std::thread::current().id().as_u64()) as i64;
 		match self.1.compare_exchange(-1, thread_id, std::sync::atomic::Ordering::SeqCst, std::sync::atomic::Ordering::SeqCst) {

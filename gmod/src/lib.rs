@@ -246,3 +246,9 @@ macro_rules! __private__gmod_rs__try_chained_open {
 		}
 	};
 }
+
+/// You don't need to use this if you are using the `#[gmod13_open]` macro.
+pub unsafe fn set_lua_state(state: *mut std::ffi::c_void) {
+	lua::__set_state__internal(lua::State(state));
+	lua::load();
+}
