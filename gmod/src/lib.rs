@@ -24,9 +24,6 @@ mod haxports {
 #[cfg(feature = "hax")]
 pub use haxports::*;
 
-#[cfg(feature = "server-plugin")]
-pub use gmserverplugin as serverplugin;
-
 /// Lua interface
 pub mod lua;
 
