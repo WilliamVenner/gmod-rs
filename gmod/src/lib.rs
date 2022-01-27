@@ -152,7 +152,7 @@ macro_rules! open_library_srv {
 				$crate::open_library_raw!("bin/", $name, ".so"),
 				$crate::open_library_raw!("bin/lib", $name, ".so"),
 				$crate::open_library_raw!("garrysmod/bin/", $name, ".so"),
-				$crate::open_library_raw!("garrysmod/bin/lib", $name, ".so"),
+				$crate::open_library_raw!("garrysmod/bin/lib", $name, ".so")
 			}
 		}
 	}};
@@ -182,14 +182,14 @@ macro_rules! open_library {
 		#[cfg(all(target_os = "windows", target_pointer_width = "32"))] {
 			$crate::__private__gmod_rs__try_chained_open! {
 				$crate::open_library_raw!("bin/", $name, ".dll"),
-				$crate::open_library_raw!("garrysmod/bin/", $name, ".dll"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, ".dll")
 			}
 		}
 
 		#[cfg(all(target_os = "linux", target_pointer_width = "64"))] {
 			$crate::__private__gmod_rs__try_chained_open! {
 				$crate::open_library_raw!("bin/linux64/", $name, ".so"),
-				$crate::open_library_raw!("bin/linux64/lib", $name, ".so"),
+				$crate::open_library_raw!("bin/linux64/lib", $name, ".so")
 			}
 		}
 		#[cfg(all(target_os = "linux", target_pointer_width = "32"))] {
@@ -203,7 +203,7 @@ macro_rules! open_library {
 				$crate::open_library_raw!("bin/", $name, "_srv.so"),
 				$crate::open_library_raw!("bin/lib", $name, "_srv.so"),
 				$crate::open_library_raw!("garrysmod/bin/", $name, "_srv.so"),
-				$crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.so"),
+				$crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.so")
 			}
 		}
 	}};
