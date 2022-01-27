@@ -4,6 +4,26 @@ use crate::lua::*;
 
 use crate::userdata::TaggedUserData;
 
+unsafe fn handle_pcall_ignore(lua: State) {
+	crate::lua_stack_guard!(lua => {
+		lua.get_global(crate::lua_string!("ErrorNoHaltWithStack"));
+		if lua.is_nil(-1) {
+			eprintln!("[ERROR] {:?}", lua.get_string(-2));
+			lua.pop();
+		} else {
+			#[cfg(debug_assertions)] {
+				lua.push_string(&format!("[pcall_ignore] {}", lua.get_string(-2).expect("Expected a string here")));
+			}
+			#[cfg(not(debug_assertions))] {
+				lua.push_value(-2);
+			}
+
+			lua.call(1, 0);
+		}
+	});
+	lua.pop();
+}
+
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug)]
 pub struct LuaState(pub *mut std::ffi::c_void);
@@ -193,28 +213,17 @@ impl LuaState {
 	///
 	/// Returns whether the execution was successful.
 	pub unsafe fn pcall_ignore(&self, nargs: i32, nresults: i32) -> bool {
-		let res = self.pcall(nargs, nresults, 0);
-		if res == LUA_ERRRUN {
-			crate::lua_stack_guard!(self => {
-				self.get_global(crate::lua_string!("ErrorNoHaltWithStack"));
-				if self.is_nil(-1) {
-					eprintln!("[ERROR] {:?}", self.get_string(-2));
-					self.pop();
-				} else {
-					#[cfg(debug_assertions)] {
-						self.push_string(&format!("[pcall_ignore] {}", self.get_string(-2).expect("Expected a string here")));
-					}
-					#[cfg(not(debug_assertions))] {
-						self.push_value(-2);
-					}
-
-					self.call(1, 0);
-				}
-			});
-			self.pop();
-			false
-		} else {
-			true
+		match self.pcall(nargs, nresults, 0) {
+			LUA_OK => true,
+			LUA_ERRRUN => {
+				handle_pcall_ignore(*self);
+				false
+			}
+			err @ _ => {
+				#[cfg(debug_assertions)]
+				eprintln!("[gmod-rs] pcall_ignore unknown error: {}", err);
+				false
+			}
 		}
 	}
 
@@ -483,13 +492,56 @@ impl LuaState {
 	}
 
 	#[inline(always)]
+	#[must_use]
 	pub unsafe fn coroutine_yield(&self, nresults: i32) -> i32 {
 		(LUA_SHARED.lua_yield)(*self, nresults)
 	}
 
 	#[inline(always)]
+	#[must_use]
 	pub unsafe fn coroutine_resume(&self, narg: i32) -> i32 {
 		(LUA_SHARED.lua_resume)(*self, narg)
+	}
+
+	#[inline(always)]
+	/// Exchange values between different threads of the same global state.
+	///
+	/// This function pops `n` values from the stack `self`, and pushes them onto the stack `target_thread`.
+	pub unsafe fn coroutine_exchange(&self, target_thread: State, n: i32) {
+		(LUA_SHARED.lua_xmove)(*self, target_thread, n)
+	}
+
+	#[inline(always)]
+	/// See `call`
+	pub unsafe fn coroutine_resume_call(&self, narg: i32) {
+		match (LUA_SHARED.lua_resume)(*self, narg) {
+			LUA_OK => {},
+			LUA_ERRRUN => self.error(self.get_string(-2).unwrap_or_else(|| Cow::Borrowed("Unknown error")).as_ref()),
+			LUA_ERRMEM => self.error("Out of memory"),
+			_ => self.error("Unknown internal Lua error")
+		}
+	}
+
+	#[inline(always)]
+	/// See `pcall_ignore`
+	pub unsafe fn coroutine_resume_pcall_ignore(&self, narg: i32) -> Result<i32, ()> {
+		match (LUA_SHARED.lua_resume)(*self, narg) {
+			status @ (LUA_OK | LUA_YIELD) => Ok(status),
+			LUA_ERRRUN => {
+				handle_pcall_ignore(*self);
+				Err(())
+			},
+			err @ _ => {
+				#[cfg(debug_assertions)]
+				eprintln!("[gmod-rs] coroutine_resume_pcall_ignore unknown error: {}", err);
+				Err(())
+			}
+		}
+	}
+
+	#[inline(always)]
+	pub unsafe fn coroutine_status(&self) -> i32 {
+		(LUA_SHARED.lua_status)(*self)
 	}
 
 	/// Creates a new table in the registry with the given `name` as the key if it doesn't already exist, and pushes it onto the stack.
