@@ -173,6 +173,7 @@ pub struct LuaShared {
 	pub lua_tothread: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index: i32) -> LuaState>,
 	pub lua_status: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState) -> i32>,
 	pub lua_xmove: Symbol<'static, unsafe extern "C-unwind" fn(thread1: LuaState, thread2: LuaState, n: i32)>,
+	pub lua_equal: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, index1: i32, index2: i32) -> i32>,
 }
 unsafe impl Sync for LuaShared {}
 impl LuaShared {
@@ -247,6 +248,7 @@ impl LuaShared {
 				lua_tothread: find_symbol!("lua_tothread"),
 				lua_status: find_symbol!("lua_status"),
 				lua_xmove: find_symbol!("lua_xmove"),
+				lua_equal: find_symbol!("lua_equal"),
 			}
 		}
 	}

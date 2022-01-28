@@ -512,6 +512,11 @@ impl LuaState {
 	}
 
 	#[inline(always)]
+	pub unsafe fn equal(&self, index1: i32, index2: i32) -> bool {
+		(LUA_SHARED.lua_equal)(*self, index1, index2) == 1
+	}
+
+	#[inline(always)]
 	/// See `call`
 	pub unsafe fn coroutine_resume_call(&self, narg: i32) {
 		match (LUA_SHARED.lua_resume)(*self, narg) {
