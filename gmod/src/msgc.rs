@@ -35,6 +35,9 @@ lazy_static::lazy_static! {
 		#[cfg(all(target_os = "linux", target_pointer_width = "32"))]
 		let lib = libloading::Library::new("bin/libtier0_srv.so").or_else(|_| libloading::Library::new("bin/linux32/libtier0.so")).expect("Failed to open libtier0.so");
 
+		#[cfg(target_os = "macos")]
+		let lib = libloading::Library::new("bin/libtier0.dylib").or_else(|_| libloading::Library::new("GarrysMod_Signed.app/Contents/MacOS/libtier0.dylib")).expect("Failed to open libtier0.dylib");
+
 		let lib = Box::leak(Box::new(lib));
 		{
 			#[cfg(all(target_os = "windows", target_pointer_width = "64"))] {
@@ -46,14 +49,8 @@ lazy_static::lazy_static! {
 					Err(_) => lib.get(b"?ConColorMsg@@YAXABVColor@@PBDZZ\0")
 				}
 			}
-			#[cfg(all(target_os = "linux", target_pointer_width = "64"))] {
+			#[cfg(any(target_os = "linux", target_os = "macos"))] {
 				lib.get(b"_Z11ConColorMsgRK5ColorPKcz\0")
-			}
-			#[cfg(all(target_os = "linux", target_pointer_width = "32"))] {
-				match lib.get(b"_Z11ConColorMsgRK5ColorPKcz\0") {
-					Ok(symbol) => Ok(symbol),
-					Err(_) => lib.get(b"_Z11ConColorMsgRK5ColorPKcz\0")
-				}
 			}
 		}
 		.expect("Failed to get ConColorMsg")
