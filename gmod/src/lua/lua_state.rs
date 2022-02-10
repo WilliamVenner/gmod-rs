@@ -576,6 +576,8 @@ impl LuaState {
 
 		let ptr = (LUA_SHARED.lua_newuserdata)(*self, std::mem::size_of::<T>()) as *mut T;
 
+		debug_assert_eq!(ptr as usize % std::mem::align_of::<T>(), 0, "Lua userdata is unaligned!");
+
 		if has_metatable {
 			self.push_value(-2);
 			self.set_metatable(-2);
