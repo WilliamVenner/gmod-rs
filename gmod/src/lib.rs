@@ -5,14 +5,22 @@
 
 #![cfg_attr(feature = "gmcl", feature(internal_output_capture))]
 
+#[cfg(not(all(any(target_os = "windows", target_os = "linux", target_os = "macos"), any(target_pointer_width = "32", target_pointer_width = "64"))))]
+compile_error!("Unsupported platform");
+
 pub use cstr;
 pub use libloading;
 pub use gmod_macros::*;
 
 #[cfg(feature = "hax")]
 mod haxports {
-	pub use detour;
+	#[cfg(not(target_os = "macos"))]
 	pub use skidscan as sigscan;
+
+	#[cfg(target_os = "macos")]
+	compile_error!("Sigscanning is currently not supported on MacOS, please disable the `hax` feature on gmod-rs using `default-features = false` to make a normal module");
+
+	pub use detour;
 	pub use ctor::{ctor as dllopen, dtor as dllclose};
 
 	pub use fn_type_alias::*;
@@ -54,6 +62,9 @@ pub fn is_x86_64() -> bool {
 			static ref IS_X86_64: bool = {
 				use std::path::PathBuf;
 
+				#[cfg(target_os = "macos")] {
+					PathBuf::from("garrysmod/bin/lua_shared.dylib").is_file()
+				}
 				#[cfg(target_os = "windows")] {
 					PathBuf::from("srcds_win64.exe").is_file()
 				}
@@ -116,10 +127,6 @@ macro_rules! open_library_raw {
 #[macro_export]
 macro_rules! open_library_srv {
 	($name:literal) => {{
-		#[cfg(not(all(any(target_os = "windows", target_os = "linux"), any(target_pointer_width = "32", target_pointer_width = "64"))))] {
-			compile_error!("Unsupported platform");
-		}
-
 		#[cfg(all(target_os = "windows", target_pointer_width = "64"))] {
 			$crate::__private__gmod_rs__try_chained_open! {
 				$crate::open_library_raw!("bin/win64/", $name, ".dll")
@@ -152,6 +159,21 @@ macro_rules! open_library_srv {
 				$crate::open_library_raw!("garrysmod/bin/lib", $name, ".so")
 			}
 		}
+
+		#[cfg(target_os = "macos")] {
+			$crate::__private__gmod_rs__try_chained_open! {
+				$crate::open_library_raw!("GarrysMod_Signed.app/Contents/MacOS/", $name, ".dylib"),
+				$crate::open_library_raw!("GarrysMod_Signed.app/Contents/MacOS/lib", $name, ".dylib"),
+				$crate::open_library_raw!("bin/", $name, "_srv.dylib"),
+				$crate::open_library_raw!("bin/lib", $name, "_srv.dylib"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, "_srv.dylib"),
+				$crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.dylib"),
+				$crate::open_library_raw!("bin/", $name, ".dylib"),
+				$crate::open_library_raw!("bin/lib", $name, ".dylib"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, ".dylib"),
+				$crate::open_library_raw!("garrysmod/bin/lib", $name, ".dylib")
+			}
+		}
 	}};
 }
 
@@ -167,10 +189,6 @@ macro_rules! open_library_srv {
 #[macro_export]
 macro_rules! open_library {
 	($name:literal) => {{
-		#[cfg(not(all(any(target_os = "windows", target_os = "linux"), any(target_pointer_width = "32", target_pointer_width = "64"))))] {
-			compile_error!("Unsupported platform");
-		}
-
 		#[cfg(all(target_os = "windows", target_pointer_width = "64"))] {
 			$crate::__private__gmod_rs__try_chained_open! {
 				$crate::open_library_raw!("bin/win64/", $name, ".dll")
@@ -201,6 +219,21 @@ macro_rules! open_library {
 				$crate::open_library_raw!("bin/lib", $name, "_srv.so"),
 				$crate::open_library_raw!("garrysmod/bin/", $name, "_srv.so"),
 				$crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.so")
+			}
+		}
+
+		#[cfg(target_os = "macos")] {
+			$crate::__private__gmod_rs__try_chained_open! {
+				$crate::open_library_raw!("GarrysMod_Signed.app/Contents/MacOS/", $name, ".dylib"),
+				$crate::open_library_raw!("GarrysMod_Signed.app/Contents/MacOS/lib", $name, ".dylib"),
+				$crate::open_library_raw!("bin/", $name, ".dylib"),
+				$crate::open_library_raw!("bin/lib", $name, ".dylib"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, ".dylib"),
+				$crate::open_library_raw!("garrysmod/bin/lib", $name, ".dylib"),
+				$crate::open_library_raw!("bin/", $name, "_srv.dylib"),
+				$crate::open_library_raw!("bin/lib", $name, "_srv.dylib"),
+				$crate::open_library_raw!("garrysmod/bin/", $name, "_srv.dylib"),
+				$crate::open_library_raw!("garrysmod/bin/lib", $name, "_srv.dylib")
 			}
 		}
 	}};

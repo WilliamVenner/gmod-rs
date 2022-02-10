@@ -38,7 +38,7 @@ pub fn override_stdout() {
 					}
 				})
 			}
-			#[cfg(target_os = "linux")] {
+			#[cfg(any(target_os = "linux", target_os = "macos"))] {
 				_lib.get(b"ConMsg\0").or_else(|_| _lib.get(b"_Z6ConMsgPKcz\0"))
 			}
 		}.expect("Failed to find ConMsg");
