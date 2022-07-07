@@ -316,6 +316,12 @@ impl LuaState {
 	}
 
 	#[inline(always)]
+	pub unsafe fn push_closure(&self, func: LuaFunction, n: i32) {
+		debug_assert!(n <= 255, "Can't push more than 255 arguments into a closure");
+		(LUA_SHARED.lua_pushcclosure)(*self, func, n)
+	}
+
+	#[inline(always)]
 	pub unsafe fn set_table(&self, index: i32) {
 		(LUA_SHARED.lua_settable)(*self, index)
 	}
