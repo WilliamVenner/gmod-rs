@@ -3,10 +3,10 @@ use std::{num::NonZeroI32, borrow::Cow};
 #[repr(transparent)]
 pub struct ValuesReturned(pub i32);
 
-impl Into<i32> for ValuesReturned {
+impl From<ValuesReturned> for i32 {
 	#[inline(always)]
-	fn into(self) -> i32 {
-		self.0
+	fn from(v: ValuesReturned) -> Self {
+		v.0
 	}
 }
 
@@ -45,11 +45,11 @@ impl From<Option<NonZeroI32>> for ValuesReturned {
 }
 
 pub trait DisplayLuaError {
-	fn display_lua_error<'a>(&'a self) -> Cow<'a, str>;
+	fn display_lua_error(&self) -> Cow<'_, str>;
 }
 impl<E: std::fmt::Debug> DisplayLuaError for E {
 	#[inline(always)]
-	fn display_lua_error<'a>(&'a self) -> Cow<'a, str> {
+	fn display_lua_error(&self) -> Cow<'_, str> {
 		Cow::Owned(format!("{:?}", self))
 	}
 }

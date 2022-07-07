@@ -114,6 +114,7 @@ impl std::ops::DerefMut for LuaSharedInterface {
 pub static mut LUA_SHARED: LuaSharedInterface = LuaSharedInterface(UnsafeCell::new(std::ptr::null_mut()), #[cfg(debug_assertions)] AtomicI64::new(-1));
 
 pub struct LuaShared {
+	pub(crate) library: &'static libloading::Library,
 	pub lual_newstate: Symbol<'static, unsafe extern "C-unwind" fn() -> LuaState>,
 	pub lual_openlibs: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState)>,
 	pub lual_loadfile: Symbol<'static, unsafe extern "C-unwind" fn(state: LuaState, path: LuaString) -> i32>,
@@ -180,7 +181,7 @@ impl LuaShared {
 	fn import() -> Self {
 		unsafe {
 			let (library, path) = Self::find_lua_shared();
-			let library = Box::leak(Box::new(library)); // Keep this library referenced forever
+			let library = Box::leak(Box::new(library));
 
 			macro_rules! find_symbol {
 				( $symbol:literal ) => {
@@ -249,6 +250,7 @@ impl LuaShared {
 				lua_status: find_symbol!("lua_status"),
 				lua_xmove: find_symbol!("lua_xmove"),
 				lua_equal: find_symbol!("lua_equal"),
+				library,
 			}
 		}
 	}

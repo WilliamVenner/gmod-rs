@@ -1,5 +1,8 @@
 //! [Available Lua Functions](https://docs.rs/gmod/latest/gmod/lua/struct.State.html)
 
+#![allow(clippy::missing_safety_doc)]
+#![allow(clippy::result_unit_err)]
+
 #![feature(c_unwind)]
 #![feature(thread_id_value)]
 
@@ -255,11 +258,11 @@ pub struct OpenGmodLibraryErrs(pub std::collections::HashMap<&'static str, liblo
 impl std::error::Error for OpenGmodLibraryErrs {}
 impl std::fmt::Display for OpenGmodLibraryErrs {
 	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-		writeln!(f, "")?;
+		writeln!(f)?;
 		for (path, err) in &self.0 {
 			writeln!(f, "{} = {}", path, err)?;
 		}
-		writeln!(f, "")?;
+		writeln!(f)?;
 		Ok(())
 	}
 }

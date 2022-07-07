@@ -100,7 +100,7 @@ macro_rules! userdata {
 			/// This will NOT perform a type check to ensure that the tagged userdata matches the user data you are coercing to.
 			///
 			/// Coercing to the wrong type is undefined behaviour and is likely to crash your program.
-			pub unsafe fn coerce_unchecked<T: CoercibleUserData>(&self) -> &mut T {
+			pub unsafe fn coerce_unchecked<'a, 'b, T: CoercibleUserData>(&'a self) -> &'b mut T {
 				&mut *(self.data as *mut T)
 			}
 		}

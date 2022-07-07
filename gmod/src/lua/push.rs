@@ -98,7 +98,7 @@ impl PushToLua for Vec<u8> {
 impl PushToLua for &[u8] {
 	#[inline]
 	unsafe fn push_to_lua(self, lua: crate::lua::State) {
-		lua.push_binary_string(&self);
+		lua.push_binary_string(self);
 	}
 }
 impl PushToLua for Duration {

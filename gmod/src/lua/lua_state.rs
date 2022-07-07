@@ -1,8 +1,5 @@
 use std::{mem::MaybeUninit, borrow::Cow, ffi::c_void};
-
-use crate::lua::*;
-
-use crate::userdata::TaggedUserData;
+use crate::{userdata::TaggedUserData, lua::*};
 
 unsafe fn handle_pcall_ignore(lua: State) {
 	crate::lua_stack_guard!(lua => {
@@ -219,7 +216,7 @@ impl LuaState {
 				handle_pcall_ignore(*self);
 				false
 			}
-			err @ _ => {
+			err => {
 				#[cfg(debug_assertions)]
 				eprintln!("[gmod-rs] pcall_ignore unknown error: {}", err);
 				false
@@ -316,9 +313,50 @@ impl LuaState {
 	}
 
 	#[inline(always)]
+	/// Creates a closure, which can be used as a function with stored data (upvalues)
+	///
+	/// ## Example
+	///
+	/// ```ignore
+	/// #[lua_function]
+	/// unsafe fn foo(lua: gmod::lua::State) {
+	///     lua.get_closure_arg(1);
+	///     let hello = lua.get_string(-1);
+	///     println!("{}", hello);
+	/// }
+	///
+	/// lua.push_string("Hello, world!");
+	/// lua.push_closure(foo, 1);
+	/// ```
 	pub unsafe fn push_closure(&self, func: LuaFunction, n: i32) {
 		debug_assert!(n <= 255, "Can't push more than 255 arguments into a closure");
 		(LUA_SHARED.lua_pushcclosure)(*self, func, n)
+	}
+
+	#[inline(always)]
+	/// Pushes the `n`th closure argument onto the stack
+	///
+	/// ## Example
+	///
+	/// ```ignore
+	/// #[lua_function]
+	/// unsafe fn foo(lua: gmod::lua::State) {
+	///     lua.push_closure_arg(1);
+	///     let hello = lua.get_string(-1);
+	///     println!("{}", hello);
+	/// }
+	///
+	/// lua.push_string("Hello, world!");
+	/// lua.push_closure(foo, 1);
+	/// ```
+	pub unsafe fn push_closure_arg(&self, n: i32) {
+		self.push_value(self.upvalue_index(n));
+	}
+
+	#[inline(always)]
+	/// Equivalent to C `lua_upvalueindex` macro
+	pub const fn upvalue_index(&self, idx: i32) -> i32 {
+		LUA_GLOBALSINDEX - idx
 	}
 
 	#[inline(always)]
@@ -393,14 +431,12 @@ impl LuaState {
 	}
 
 	pub unsafe fn test_userdata(&self, index: i32, name: LuaString) -> bool {
-		if !(LUA_SHARED.lua_touserdata)(*self, index).is_null() {
-			if self.get_metatable(index) != 0 {
-				self.get_field(LUA_REGISTRYINDEX, name);
-				let result = self.raw_equal(-1, -2);
-				self.pop_n(2);
-				if result {
-					return true;
-				}
+		if !(LUA_SHARED.lua_touserdata)(*self, index).is_null() && self.get_metatable(index) != 0 {
+			self.get_field(LUA_REGISTRYINDEX, name);
+			let result = self.raw_equal(-1, -2);
+			self.pop_n(2);
+			if result {
+				return true;
 			}
 		}
 		false
@@ -463,6 +499,7 @@ impl LuaState {
 	}
 
 	#[inline(always)]
+	#[allow(clippy::len_without_is_empty)]
 	pub unsafe fn len(&self, index: i32) -> i32 {
 		(LUA_SHARED.lua_objlen)(*self, index)
 	}
@@ -527,7 +564,7 @@ impl LuaState {
 	pub unsafe fn coroutine_resume_call(&self, narg: i32) {
 		match (LUA_SHARED.lua_resume)(*self, narg) {
 			LUA_OK => {},
-			LUA_ERRRUN => self.error(self.get_string(-2).unwrap_or_else(|| Cow::Borrowed("Unknown error")).as_ref()),
+			LUA_ERRRUN => self.error(self.get_string(-2).unwrap_or(Cow::Borrowed("Unknown error")).as_ref()),
 			LUA_ERRMEM => self.error("Out of memory"),
 			_ => self.error("Unknown internal Lua error")
 		}
@@ -542,7 +579,7 @@ impl LuaState {
 				handle_pcall_ignore(*self);
 				Err(())
 			},
-			err @ _ => {
+			err => {
 				#[cfg(debug_assertions)]
 				eprintln!("[gmod-rs] coroutine_resume_pcall_ignore unknown error: {}", err);
 				Err(())
@@ -631,10 +668,8 @@ impl LuaState {
 
 	pub unsafe fn debug_getinfo_at(&self, level: i32, what: LuaString) -> Option<LuaDebug> {
 		let mut ar = MaybeUninit::uninit();
-		if (LUA_SHARED.lua_getstack)(*self, level, ar.as_mut_ptr()) != 0 {
-			if (LUA_SHARED.lua_getinfo)(*self, what, ar.as_mut_ptr()) != 0 {
-				return Some(ar.assume_init());
-			}
+		if (LUA_SHARED.lua_getstack)(*self, level, ar.as_mut_ptr()) != 0 && (LUA_SHARED.lua_getinfo)(*self, what, ar.as_mut_ptr()) != 0 {
+			return Some(ar.assume_init());
 		}
 		None
 	}
