@@ -132,8 +132,19 @@ impl LuaState {
 	}
 
 	#[inline(always)]
+	/// You may be looking for `is_none_or_nil`
 	pub unsafe fn is_nil(&self, index: i32) -> bool {
 		(LUA_SHARED.lua_type)(*self, index) == LUA_TNIL
+	}
+
+	#[inline(always)]
+	pub unsafe fn is_none(&self, index: i32) -> bool {
+		(LUA_SHARED.lua_type)(*self, index) == LUA_TNONE
+	}
+
+	#[inline(always)]
+	pub unsafe fn is_none_or_nil(&self, index: i32) -> bool {
+		self.is_nil(index) || self.is_none(index)
 	}
 
 	#[inline(always)]
