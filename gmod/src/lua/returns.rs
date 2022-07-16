@@ -62,3 +62,12 @@ impl<E: DisplayLuaError> From<Result<i32, E>> for ValuesReturned {
 		}
 	}
 }
+impl<E: DisplayLuaError> From<Result<(), E>> for ValuesReturned {
+	#[inline(always)]
+	fn from(res: Result<(), E>) -> ValuesReturned {
+		match res {
+			Ok(_) => ValuesReturned(0),
+			Err(err) => unsafe { super::state().error(err.display_lua_error().as_ref()) }
+		}
+	}
+}
