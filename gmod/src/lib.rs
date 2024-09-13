@@ -3,7 +3,6 @@
 #![allow(clippy::missing_safety_doc)]
 #![allow(clippy::result_unit_err)]
 
-#![feature(c_unwind)]
 #![feature(thread_id_value)]
 
 #![cfg_attr(feature = "gmcl", feature(internal_output_capture))]
