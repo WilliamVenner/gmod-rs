@@ -1,5 +1,3 @@
-#![feature(c_unwind)]
-
 use gmod::gmcl::override_stdout;
 use gmod::lua::State;
 
