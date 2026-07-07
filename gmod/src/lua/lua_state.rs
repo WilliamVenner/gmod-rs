@@ -28,10 +28,10 @@ pub struct LuaState(pub *mut std::ffi::c_void);
 impl LuaState {
 	pub unsafe fn new() -> Result<Self, LuaError> {
 		let lua = (LUA_SHARED.lual_newstate)();
-		(LUA_SHARED.lual_openlibs)(lua);
 		if lua.is_null() {
 			Err(LuaError::MemoryAllocationError)
 		} else {
+			(LUA_SHARED.lual_openlibs)(lua);
 			Ok(lua)
 		}
 	}
