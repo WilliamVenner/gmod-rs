@@ -97,7 +97,7 @@ macro_rules! lua_stack_guard {
 			let ret = (|| $code)();
 			if $lua.get_top() != $elem {
 				$lua.dump_stack();
-				panic!("Stack is dirty! Expected the stack to have ", $elem, " (fixed size) elements, but it has {}!", $lua.get_top());
+				panic!("Stack is dirty! Expected the stack to have {} (fixed size) elements, but it has {}!", $elem, $lua.get_top());
 			}
 			ret
 		}
