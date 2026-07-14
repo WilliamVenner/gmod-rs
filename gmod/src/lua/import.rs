@@ -262,14 +262,37 @@ impl LuaShared {
 		}
 	}
 
+	/// Garry's Mod has already loaded lua_shared into the process by the time a binary module
+	/// runs, so ask the loader for the module that is already there rather than making it find
+	/// the file again.
+	///
+	/// The path-based lookup below is relative. Windows' DLL search order includes the process's
+	/// current directory, so it resolves there -- but Wine's does not, so under Proton it fails
+	/// with ERROR_MOD_NOT_FOUND and `.expect()` panics out of the `extern "C"` `gmod13_open`,
+	/// taking the game down. Looking up the already-loaded module works on both.
+	#[cfg(target_os = "windows")]
+	unsafe fn open_loaded_lua_shared() -> Option<(Library, &'static str)> {
+		libloading::os::windows::Library::open_already_loaded("lua_shared.dll")
+			.ok()
+			.map(|lib| (Library::from(lib), "lua_shared.dll"))
+	}
+
 	#[cfg(all(target_os = "windows", target_pointer_width = "64"))]
 	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
+		if let Some(loaded) = Self::open_loaded_lua_shared() {
+			return loaded;
+		}
+
 		crate::open_library_raw!("bin/win64/lua_shared.dll")
 		.expect("Failed to load lua_shared.dll")
 	}
 
 	#[cfg(all(target_os = "windows", target_pointer_width = "32"))]
 	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
+		if let Some(loaded) = Self::open_loaded_lua_shared() {
+			return loaded;
+		}
+
 		crate::__private__gmod_rs__try_chained_open! {
 			crate::open_library_raw!("garrysmod/bin/lua_shared.dll"),
 			crate::open_library_raw!("bin/lua_shared.dll")
