@@ -1,17 +1,31 @@
 [package]
 name = "gmod"
-version = "17.0.0"
+version = "17.0.1"
 authors = ["William Venner <william@venner.io>"]
 edition = "2021"
 license = "MIT"
 description = "A swiss army knife for creating binary modules for Garry's Mod in Rust"
 repository = "https://github.com/WilliamVenner/gmod-rs"
 keywords = ["gmod", "garrysmod", "module", "glua"]
-categories = ["api-bindings", "external-ffi-bindings", "game-development", "development-tools"]
+categories = [
+	"api-bindings",
+	"external-ffi-bindings",
+	"game-development",
+	"development-tools",
+]
 
 [features]
 default = ["hax"]
-hax = ["ctor", "skidscan", "retour", "fn_type_alias", "fn_abi", "cfg_table", "null_fn", "fn_has_this"]
+hax = [
+	"ctor",
+	"skidscan",
+	"retour",
+	"fn_type_alias",
+	"fn_abi",
+	"cfg_table",
+	"null_fn",
+	"fn_has_this",
+]
 gmcl = ["gmod-macros/gmcl"]
 
 [dependencies]
@@ -21,7 +35,9 @@ libloading = "0"
 cstr = "0"
 lazy_static = "1"
 
-retour = { version = "0.4.0-alpha.4", features = ["thiscall-abi"], optional = true }
+retour = { version = "0.4.0-alpha.4", features = [
+	"thiscall-abi",
+], optional = true }
 ctor = { version = "0", optional = true }
 skidscan = { version = "2", optional = true }
 
