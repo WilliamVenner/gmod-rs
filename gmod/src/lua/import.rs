@@ -312,8 +312,12 @@ impl LuaShared {
 
 	#[cfg(all(target_os = "linux", target_pointer_width = "64"))]
 	pub unsafe fn find_lua_shared() -> (Library, &'static str) {
-		crate::open_library_raw!("bin/linux64/lua_shared.so")
-		.expect("Failed to find lua_shared.so")
+		crate::__private__gmod_rs__try_chained_open! {
+			crate::open_library_raw!("bin/linux64/lua_shared_srv.so"),
+			crate::open_library_raw!("bin/linux64/lua_shared.so"),
+			crate::open_library_raw!("garrysmod/bin/linux64/lua_shared.so")
+		}
+		.expect("Failed to find lua_shared.so or lua_shared_srv.so")
 	}
 
 	#[cfg(all(target_os = "macos", target_pointer_width = "32"))]
